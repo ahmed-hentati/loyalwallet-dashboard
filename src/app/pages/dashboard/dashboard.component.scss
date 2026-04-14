@@ -1,0 +1,24 @@
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.muted { color: var(--text-secondary); }
+.small { font-size: 13px; }
+
+.value {
+  &.primary { color: var(--primary); }
+  &.success { color: var(--success); }
+  &.plan-value { font-size: 20px; margin-top: 4px; }
+}
+
+.upgrade-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+
+  &:hover { text-decoration: underline; }
+}

@@ -1,0 +1,43 @@
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <span>🎯</span>
+        <span>LoyalWallet</span>
+      </div>
+
+      @if (auth.restaurant(); as r) {
+        <div class="restaurant-info">
+          <div class="avatar">{{ r.name[0] }}</div>
+          <div>
+            <div class="r-name">{{ r.name }}</div>
+            <span class="badge"
+              [class.badge-orange]="r.plan === 'free'"
+              [class.badge-success]="r.plan === 'pro'">
+              {{ r.plan === 'free' ? 'Plan Gratuit' : 'Plan Pro' }}
+            </span>
+          </div>
+        </div>
+      }
+
+      <ul class="nav-links">
+        @for (link of links; track link.path) {
+          <li>
+            <a [routerLink]="link.path" routerLinkActive="active">
+              <span class="nav-icon">{{ link.icon }}</span>
+              <span>{{ link.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <button class="logout-btn" (click)="auth.logout()">
+      ↩ Déconnexion
+    </button>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,145 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>👥 Clients</h1>
+      <p class="subtitle">
+        {{ clients().length }} client{{ clients().length > 1 ? 's' : '' }}
+        enregistré{{ clients().length > 1 ? 's' : '' }}
+      </p>
+    </div>
+    <button class="btn btn-primary" (click)="showModal.set(true)">+ Nouveau client</button>
+  </div>
+
+  <!-- Recherche -->
+  <div class="card search-card">
+    <input
+      type="text"
+      [value]="search()"
+      (input)="onSearch($any($event.target).value)"
+      placeholder="🔍  Rechercher par nom ou téléphone..."
+    />
+  </div>
+
+  @if (clients().length === 0 && !loading()) {
+    <div class="card empty-state">
+      <div class="icon">👥</div>
+      <h3>Aucun client trouvé</h3>
+      @if (!search()) {
+        <p>Créez votre première carte et enregistrez des clients</p>
+      } @else {
+        <p>Aucun résultat pour "{{ search() }}"</p>
+      }
+    </div>
+  } @else {
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Carte</th>
+              <th>Progression</th>
+              <th>Visites</th>
+              <th>Récompenses</th>
+              <th>Depuis</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of clients(); track c.id) {
+              <tr>
+                <td>
+                  <div class="client-cell">
+                    <div class="avatar">{{ (c.name || '?')[0].toUpperCase() }}</div>
+                    <div>
+                      <div class="client-name">{{ c.name || 'Anonyme' }}</div>
+                      <div class="serial">{{ c.serial_number }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ c.card_name }}</td>
+                <td>
+                  @if (getCard(c.card_id)?.loyalty_type === 'stamp') {
+                    <div class="mini-stamps">
+                      @for (i of range(getCard(c.card_id)?.stamp_total ?? 10); track i) {
+                        <span class="mini-dot" [class.filled]="i < c.stamps"></span>
+                      }
+                      <span class="mini-label">{{ c.stamps }}/{{ getCard(c.card_id)?.stamp_total }}</span>
+                    </div>
+                  } @else {
+                    <div class="mini-points">
+                      <div class="mini-bar">
+                        <div class="mini-fill"
+                          [style.width.%]="clamp((c.points / (getCard(c.card_id)?.points_for_reward ?? 50)) * 100)">
+                        </div>
+                      </div>
+                      <span class="mini-label">{{ c.points }}/{{ getCard(c.card_id)?.points_for_reward }} pts</span>
+                    </div>
+                  }
+                </td>
+                <td><strong>{{ c.total_visits }}</strong></td>
+                <td>
+                  @if (c.total_rewards > 0) {
+                    <span class="badge badge-success">{{ c.total_rewards }} 🎁</span>
+                  } @else {
+                    <span class="muted">—</span>
+                  }
+                </td>
+                <td class="muted small">{{ formatDate(c.created_at) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Modal nouveau client -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Nouveau client</h2>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label>Carte de fidélité</label>
+        <select #cardSel>
+          <option value="">Choisir une carte...</option>
+          @for (c of allCards(); track c.id) {
+            <option [value]="c.id">{{ c.card_name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nom (optionnel)</label>
+        <input #nameInput type="text" placeholder="Prénom du client" />
+      </div>
+      <div class="form-group">
+        <label>Téléphone (optionnel)</label>
+        <input #phoneInput type="tel" placeholder="+33 6 ..." />
+      </div>
+
+      @if (createResult(); as cr) {
+        <div class="create-success">
+          <p class="success-title">✅ Carte créée !</p>
+          <p>Numéro : <strong class="serial-code">{{ cr.holder?.serial_number }}</strong></p>
+        </div>
+      }
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" style="flex:1; justify-content:center;" (click)="closeModal()">
+          {{ createResult() ? 'Fermer' : 'Annuler' }}
+        </button>
+        @if (!createResult()) {
+          <button class="btn btn-primary" style="flex:1; justify-content:center;"
+            (click)="createClient(cardSel.value, nameInput.value, phoneInput.value)"
+            [disabled]="!cardSel.value || creating()">
+            {{ creating() ? 'Création...' : 'Créer' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

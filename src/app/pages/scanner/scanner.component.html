@@ -1,0 +1,176 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>📷 Scanner</h1>
+      <p class="subtitle">Scannez ou entrez le numéro de carte du client</p>
+    </div>
+  </div>
+
+  <div class="scanner-layout">
+
+    <!-- Saisie -->
+    <div class="card input-card">
+      <h2>Code client</h2>
+
+      <div class="form-group">
+        <label>Numéro de carte</label>
+        <input
+          #serialInput
+          type="text"
+          (input)="serialInput.value = serialInput.value.toUpperCase()"
+          (keydown.enter)="doScan(serialInput.value)"
+          placeholder="LW-xxxxxxxx"
+          [disabled]="loading()"
+          class="serial-input"
+          autofocus
+        />
+        <small class="hint">Scannez le QR code du Wallet ou tapez manuellement</small>
+      </div>
+
+      <button
+        class="btn btn-primary scan-btn"
+        (click)="doScan(serialInput.value)"
+        [disabled]="!serialInput.value || loading()">
+        {{ loading() ? '⏳ Traitement...' : '✓ Valider le scan' }}
+      </button>
+
+      <div class="divider"></div>
+
+      <button class="btn btn-secondary full-btn" (click)="showNewClient.set(true)">
+        ➕ Nouveau client
+      </button>
+    </div>
+
+    <!-- Résultat -->
+    <div class="card result-card"
+      [class.is-reward]="result()?.reward?.triggered"
+      [class.is-error]="!!error() && !result()">
+
+      @if (!result() && !error()) {
+        <div class="empty-state">
+          <div class="icon">📱</div>
+          <h3>En attente de scan</h3>
+          <p>Le résultat apparaîtra ici</p>
+        </div>
+      }
+
+      @if (error() && !result()) {
+        <div class="error-result">
+          <div class="result-icon">❌</div>
+          <h2>Carte introuvable</h2>
+          <p>{{ error() }}</p>
+          <button class="btn btn-secondary" (click)="reset()">Réessayer</button>
+        </div>
+      }
+
+      @if (result(); as r) {
+
+        @if (r.reward.triggered) {
+          <div class="reward-screen">
+            <div class="reward-emoji">🎉</div>
+            <h2>Récompense débloquée !</h2>
+            <p class="reward-desc">{{ r.reward.description }}</p>
+            <p class="reward-client">pour <strong>{{ r.client.name }}</strong></p>
+            <div class="reward-badge">{{ r.reward.message }}</div>
+          </div>
+        }
+
+        @else if (r.loyalty_type === 'stamp') {
+          <div class="scan-result-header">
+            <div>
+              <h2>{{ r.client.name }}</h2>
+              <p class="muted">{{ r.client.total_visits }} visite{{ r.client.total_visits > 1 ? 's' : '' }}</p>
+            </div>
+            <span class="badge badge-orange">+{{ r.client.stamps_earned }} tampon</span>
+          </div>
+
+          <div class="stamp-grid">
+            @for (i of range(r.client.stamps_total!); track i) {
+              <div class="stamp-dot"
+                [class.filled]="i < r.client.stamps_after!"
+                [class.new-stamp]="i === r.client.stamps_after! - 1">
+                {{ i < r.client.stamps_after! ? '✓' : '' }}
+              </div>
+            }
+          </div>
+          <p class="progress-msg">{{ r.reward.message }}</p>
+        }
+
+        @else {
+          <div class="scan-result-header">
+            <div>
+              <h2>{{ r.client.name }}</h2>
+              <p class="muted">{{ r.client.total_visits }} visite{{ r.client.total_visits > 1 ? 's' : '' }}</p>
+            </div>
+            <span class="badge badge-orange">+{{ r.client.points_earned }} pt</span>
+          </div>
+
+          <div class="points-display">
+            <span class="points-val">{{ r.client.points_after }}</span>
+            <span class="points-goal">/ {{ r.client.points_goal }} pts</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill"
+              [style.width.%]="(r.client.points_after! / r.client.points_goal!) * 100">
+            </div>
+          </div>
+          <p class="progress-msg">{{ r.reward.message }}</p>
+        }
+
+        <button class="btn btn-secondary full-btn" style="margin-top: 20px;" (click)="reset()">
+          Scanner un autre client
+        </button>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Modal nouveau client -->
+@if (showNewClient()) {
+  <div class="modal-backdrop" (click)="closeNewClient()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Nouveau client</h2>
+        <button class="modal-close" (click)="closeNewClient()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label>Carte de fidélité</label>
+        <select #cardSel>
+          <option value="">Choisir une carte...</option>
+          @for (c of cards(); track c.id) {
+            <option [value]="c.id">{{ c.card_name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nom du client (optionnel)</label>
+        <input #nameInput type="text" placeholder="Ahmed" />
+      </div>
+      <div class="form-group">
+        <label>Téléphone (optionnel)</label>
+        <input #phoneInput type="tel" placeholder="+33 6 12 34 56 78" />
+      </div>
+
+      @if (createResult(); as cr) {
+        <div class="create-success">
+          <p class="success-title">✅ Carte créée !</p>
+          <p>Numéro : <strong class="serial-code">{{ cr.holder?.serial_number }}</strong></p>
+        </div>
+      }
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" style="flex:1; justify-content:center;" (click)="closeNewClient()">
+          {{ createResult() ? 'Fermer' : 'Annuler' }}
+        </button>
+        @if (!createResult()) {
+          <button class="btn btn-primary" style="flex:1; justify-content:center;"
+            (click)="createClient(cardSel.value, nameInput.value, phoneInput.value)"
+            [disabled]="!cardSel.value || creating()">
+            {{ creating() ? 'Création...' : 'Créer' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

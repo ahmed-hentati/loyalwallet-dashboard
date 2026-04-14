@@ -1,0 +1,174 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>🎴 Mes cartes</h1>
+      <p class="subtitle">Créez et gérez vos cartes de fidélité</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">+ Nouvelle carte</button>
+  </div>
+
+  @if (cards().length === 0 && !loading()) {
+    <div class="card empty-state">
+      <div class="icon">🎴</div>
+      <h3>Aucune carte créée</h3>
+      <p>Créez votre première carte pour commencer</p>
+      <button class="btn btn-primary" style="margin-top: 16px;" (click)="openCreate()">
+        Créer ma première carte
+      </button>
+    </div>
+  } @else {
+    <div class="cards-grid">
+      @for (card of cards(); track card.id) {
+        <div class="loyalty-card-item card">
+
+          <!-- Preview Wallet -->
+          <div class="wallet-preview" [style.background]="card.background_color">
+            <div class="wp-label" [style.color]="card.label_color">
+              {{ card.loyalty_type === 'stamp' ? 'Tampons' : 'Points' }}
+            </div>
+            <div class="wp-value" [style.color]="card.foreground_color">
+              {{ card.loyalty_type === 'stamp' ? '0 / ' + card.stamp_total : '0 pts' }}
+            </div>
+            <div class="wp-reward" [style.color]="card.label_color">{{ card.reward_description }}</div>
+            <div class="wp-name"   [style.color]="card.foreground_color">{{ card.card_name }}</div>
+          </div>
+
+          <div class="card-meta">
+            <div class="meta-header">
+              <div>
+                <h3>{{ card.card_name }}</h3>
+                <span class="badge badge-gray" style="margin-top: 6px;">
+                  {{ card.loyalty_type === 'stamp'
+                    ? '🎴 ' + card.stamp_total + ' tampons'
+                    : '⭐ Seuil ' + card.points_for_reward + ' pts' }}
+                </span>
+              </div>
+              <button class="btn btn-secondary btn-sm" (click)="openEdit(card)">Modifier</button>
+            </div>
+
+            <p class="rule-text">
+              @if (card.loyalty_type === 'stamp') {
+                {{ card.stamp_per_visit }} tampon / visite → récompense à {{ card.stamp_total }}
+              } @else {
+                {{ card.points_per_visit }} pt / visite → récompense à {{ card.points_for_reward }} pts
+              }
+            </p>
+            <p class="reward-text">🎁 {{ card.reward_description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal modal-wide" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingId() ? 'Modifier la carte' : 'Nouvelle carte' }}</h2>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <!-- Type (création seulement) -->
+      @if (!editingId()) {
+        <label class="section-label">Système de fidélité</label>
+        <div class="type-select">
+          <button [class.active]="form().loyalty_type === 'stamp'" (click)="patch('loyalty_type', 'stamp')">
+            <span>🎴</span>
+            <strong>Tampon</strong>
+            <small>Carte à composter (ex: 10 cases)</small>
+          </button>
+          <button [class.active]="form().loyalty_type === 'points'" (click)="patch('loyalty_type', 'points')">
+            <span>⭐</span>
+            <strong>Points</strong>
+            <small>Cumul de points (ex: 50 pts)</small>
+          </button>
+        </div>
+      }
+
+      <div class="form-group">
+        <label>Nom de la carte</label>
+        <input type="text" [value]="form().card_name"
+          (input)="patch('card_name', $any($event.target).value)"
+          placeholder="Chez Marco — Fidélité" />
+      </div>
+
+      @if (form().loyalty_type === 'stamp') {
+        <div class="two-cols">
+          <div class="form-group">
+            <label>Nombre de cases</label>
+            <input type="number" [value]="form().stamp_total" min="1" max="20"
+              (input)="patch('stamp_total', +$any($event.target).value)" />
+          </div>
+          <div class="form-group">
+            <label>Tampons / visite</label>
+            <input type="number" [value]="form().stamp_per_visit" min="1"
+              (input)="patch('stamp_per_visit', +$any($event.target).value)" />
+          </div>
+        </div>
+      } @else {
+        <div class="two-cols">
+          <div class="form-group">
+            <label>Points / visite</label>
+            <input type="number" [value]="form().points_per_visit" min="1"
+              (input)="patch('points_per_visit', +$any($event.target).value)" />
+          </div>
+          <div class="form-group">
+            <label>Seuil récompense</label>
+            <input type="number" [value]="form().points_for_reward" min="1"
+              (input)="patch('points_for_reward', +$any($event.target).value)" />
+          </div>
+        </div>
+      }
+
+      <div class="form-group">
+        <label>Récompense offerte</label>
+        <input type="text" [value]="form().reward_description"
+          (input)="patch('reward_description', $any($event.target).value)"
+          placeholder="1 café offert" />
+      </div>
+
+      <!-- Couleurs -->
+      <label class="section-label">Couleurs de la carte</label>
+      <div class="three-cols">
+        @for (col of colorFields; track col.key) {
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>{{ col.label }}</label>
+            <div class="color-row">
+              <input type="color" [value]="getColor(col.key)"
+                (input)="patch(col.key, $any($event.target).value)"
+                class="color-swatch" />
+              <input type="text" [value]="getColor(col.key)"
+                (input)="patch(col.key, $any($event.target).value)" />
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Live preview -->
+      <label class="section-label">Aperçu</label>
+      <div class="wallet-preview" [style.background]="form().background_color">
+        <div class="wp-label" [style.color]="form().label_color">
+          {{ form().loyalty_type === 'stamp' ? 'Tampons' : 'Points' }}
+        </div>
+        <div class="wp-value" [style.color]="form().foreground_color">
+          {{ form().loyalty_type === 'stamp' ? '0 / ' + form().stamp_total : '0 pts' }}
+        </div>
+        <div class="wp-reward" [style.color]="form().label_color">
+          {{ form().reward_description || 'Votre récompense' }}
+        </div>
+        <div class="wp-name" [style.color]="form().foreground_color">
+          {{ form().card_name || 'Nom de la carte' }}
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button class="btn btn-secondary" style="flex:1; justify-content:center;" (click)="closeModal()">Annuler</button>
+        <button class="btn btn-primary" style="flex:1; justify-content:center;" (click)="save()" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : (editingId() ? 'Enregistrer' : 'Créer la carte') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

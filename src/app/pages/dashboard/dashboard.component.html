@@ -1,0 +1,105 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Bonjour 👋</h1>
+      <p class="subtitle">Voici ce qui se passe chez {{ auth.restaurant()?.name }}</p>
+    </div>
+    <a routerLink="/scanner" class="btn btn-primary">📷 Scanner un client</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    @if (stats(); as s) {
+      <div class="stat-card">
+        <div class="label">Clients fidèles</div>
+        <div class="value primary">{{ s.total_clients }}</div>
+        @if (auth.restaurant()?.plan === 'free') {
+          <div class="sub">sur 50 (plan gratuit)</div>
+        }
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Scans total</div>
+        <div class="value">{{ s.total_scans }}</div>
+        <div class="sub">visites enregistrées</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Récompenses offertes</div>
+        <div class="value success">{{ s.total_rewards }}</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Plan actuel</div>
+        <div class="value plan-value">
+          {{ auth.restaurant()?.plan === 'free' ? 'Gratuit' : 'Pro ✨' }}
+        </div>
+        @if (auth.restaurant()?.plan === 'free') {
+          <div class="sub">
+            <a href="#" class="upgrade-link">Passer au Pro →</a>
+          </div>
+        }
+      </div>
+    } @else {
+      @for (i of [1,2,3,4]; track i) {
+        <div class="stat-card">
+          <div class="skeleton" style="height:14px; width:80px; margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:36px; width:60px;"></div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Recent scans -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Derniers scans</h2>
+      <a routerLink="/clients" class="btn btn-secondary btn-sm">Voir tous les clients</a>
+    </div>
+
+    @if (scans().length === 0 && !loadingScans()) {
+      <div class="empty-state">
+        <div class="icon">📋</div>
+        <h3>Aucun scan pour l'instant</h3>
+        <p>Commencez par <a routerLink="/scanner">scanner un client</a></p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Carte</th>
+              <th>Type</th>
+              <th>Résultat</th>
+              <th>Heure</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (scan of scans(); track scan.id) {
+              <tr>
+                <td><strong>{{ scan.client_name || 'Anonyme' }}</strong></td>
+                <td class="muted">{{ scan.card_name }}</td>
+                <td>
+                  <span class="badge badge-gray">
+                    {{ scan.loyalty_type === 'stamp' ? '🎴 Tampon' : '⭐ Points' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge"
+                    [class.badge-success]="scan.reward_triggered"
+                    [class.badge-orange]="!scan.reward_triggered">
+                    @if (scan.reward_triggered) { 🎉 Récompense ! }
+                    @else if (scan.loyalty_type === 'stamp') { +{{ scan.stamps_earned }} tampon }
+                    @else { +{{ scan.points_earned }} pt }
+                  </span>
+                </td>
+                <td class="muted small">{{ formatDate(scan.created_at) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

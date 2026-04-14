@@ -1,0 +1,64 @@
+<div class="login-wrap">
+  <div class="login-box">
+
+    <div class="logo">
+      <span class="logo-icon">🎯</span>
+      <span class="logo-text">LoyalWallet</span>
+    </div>
+    <p class="tagline">Gérez la fidélité de vos clients</p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button [class.active]="mode() === 'login'" (click)="mode.set('login')">Connexion</button>
+      <button [class.active]="mode() === 'register'" (click)="mode.set('register')">Créer un compte</button>
+    </div>
+
+    @if (error()) {
+      <div class="error-msg">{{ error() }}</div>
+    }
+
+    <!-- Login -->
+    @if (mode() === 'login') {
+      <div class="form-group">
+        <label>Email</label>
+        <input #emailRef type="email" placeholder="marco@restaurant.com" />
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input #passwordRef type="password" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary btn-full"
+        (click)="login(emailRef.value, passwordRef.value)"
+        [disabled]="loading()">
+        {{ loading() ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    }
+
+    <!-- Register -->
+    @if (mode() === 'register') {
+      <div class="form-group">
+        <label>Nom du restaurant</label>
+        <input #nameRef type="text" placeholder="Chez Marco" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input #emailRef2 type="email" placeholder="marco@restaurant.com" />
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input #phoneRef type="tel" placeholder="+33 6 12 34 56 78" />
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input #passwordRef2 type="password" placeholder="8 caractères minimum" />
+      </div>
+      <button class="btn btn-primary btn-full"
+        (click)="register(nameRef.value, emailRef2.value, passwordRef2.value, phoneRef.value)"
+        [disabled]="loading()">
+        {{ loading() ? 'Création...' : 'Créer mon compte' }}
+      </button>
+    }
+
+    <p class="free-note">✨ Gratuit jusqu'à 50 clients — aucune carte bancaire requise</p>
+  </div>
+</div>
