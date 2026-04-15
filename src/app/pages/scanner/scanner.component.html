@@ -2,16 +2,42 @@
   <div class="page-header">
     <div>
       <h1>📷 Scanner</h1>
-      <p class="subtitle">Scannez ou entrez le numéro de carte du client</p>
+      <p class="subtitle">Scannez la carte Wallet du client</p>
     </div>
   </div>
 
   <div class="scanner-layout">
 
-    <!-- Saisie -->
+    <!-- Colonne gauche -->
     <div class="card input-card">
-      <h2>Code client</h2>
 
+      <!-- Bouton caméra -->
+      <button class="camera-btn" [class.active]="cameraActive()" (click)="toggleCamera()">
+        @if (cameraLoading()) { ⏳ Démarrage de la caméra... }
+        @else if (cameraActive()) { ⏹ Arrêter la caméra }
+        @else { 📷 Scanner avec la caméra }
+      </button>
+
+      <!-- Viewfinder -->
+      @if (cameraActive() || cameraLoading()) {
+        <div class="camera-wrap">
+          <video #videoEl playsinline muted class="camera-video"></video>
+          <canvas #canvasEl style="display:none;"></canvas>
+          <div class="camera-overlay">
+            <div class="scan-frame"></div>
+            <p class="scan-hint">Pointez vers le QR code de la carte Wallet</p>
+          </div>
+        </div>
+      }
+
+      @if (cameraError()) {
+        <div class="camera-error">⚠️ {{ cameraError() }}</div>
+      }
+
+      <!-- Séparateur -->
+      <div class="divider"><span>ou saisie manuelle</span></div>
+
+      <!-- Saisie manuelle -->
       <div class="form-group">
         <label>Numéro de carte</label>
         <input
@@ -22,35 +48,39 @@
           placeholder="LW-xxxxxxxx"
           [disabled]="loading()"
           class="serial-input"
-          autofocus
         />
-        <small class="hint">Scannez le QR code du Wallet ou tapez manuellement</small>
       </div>
 
-      <button
-        class="btn btn-primary scan-btn"
+      <button class="btn btn-primary scan-btn"
         (click)="doScan(serialInput.value)"
         [disabled]="!serialInput.value || loading()">
-        {{ loading() ? '⏳ Traitement...' : '✓ Valider le scan' }}
+        {{ loading() ? '⏳ Traitement...' : '✓ Valider' }}
       </button>
 
-      <div class="divider"></div>
+      <div class="separator"></div>
 
       <button class="btn btn-secondary full-btn" (click)="showNewClient.set(true)">
         ➕ Nouveau client
       </button>
     </div>
 
-    <!-- Résultat -->
+    <!-- Colonne droite : résultat -->
     <div class="card result-card"
       [class.is-reward]="result()?.reward?.triggered"
       [class.is-error]="!!error() && !result()">
 
-      @if (!result() && !error()) {
+      @if (!result() && !error() && !loading()) {
         <div class="empty-state">
           <div class="icon">📱</div>
           <h3>En attente de scan</h3>
-          <p>Le résultat apparaîtra ici</p>
+          <p>Utilisez la caméra ou entrez le numéro manuellement</p>
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Traitement en cours...</p>
         </div>
       }
 
@@ -64,7 +94,6 @@
       }
 
       @if (result(); as r) {
-
         @if (r.reward.triggered) {
           <div class="reward-screen">
             <div class="reward-emoji">🎉</div>
@@ -74,7 +103,6 @@
             <div class="reward-badge">{{ r.reward.message }}</div>
           </div>
         }
-
         @else if (r.loyalty_type === 'stamp') {
           <div class="scan-result-header">
             <div>
@@ -83,7 +111,6 @@
             </div>
             <span class="badge badge-orange">+{{ r.client.stamps_earned }} tampon</span>
           </div>
-
           <div class="stamp-grid">
             @for (i of range(r.client.stamps_total!); track i) {
               <div class="stamp-dot"
@@ -95,7 +122,6 @@
           </div>
           <p class="progress-msg">{{ r.reward.message }}</p>
         }
-
         @else {
           <div class="scan-result-header">
             <div>
@@ -104,7 +130,6 @@
             </div>
             <span class="badge badge-orange">+{{ r.client.points_earned }} pt</span>
           </div>
-
           <div class="points-display">
             <span class="points-val">{{ r.client.points_after }}</span>
             <span class="points-goal">/ {{ r.client.points_goal }} pts</span>
@@ -117,7 +142,7 @@
           <p class="progress-msg">{{ r.reward.message }}</p>
         }
 
-        <button class="btn btn-secondary full-btn" style="margin-top: 20px;" (click)="reset()">
+        <button class="btn btn-secondary full-btn" style="margin-top:20px;" (click)="reset()">
           Scanner un autre client
         </button>
       }
@@ -133,7 +158,6 @@
         <h2>Nouveau client</h2>
         <button class="modal-close" (click)="closeNewClient()">✕</button>
       </div>
-
       <div class="form-group">
         <label>Carte de fidélité</label>
         <select #cardSel>
@@ -144,27 +168,25 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Nom du client (optionnel)</label>
-        <input #nameInput type="text" placeholder="Ahmed" />
+        <label>Nom (optionnel)</label>
+        <input #nameInput type="text" placeholder="Prénom du client" />
       </div>
       <div class="form-group">
         <label>Téléphone (optionnel)</label>
-        <input #phoneInput type="tel" placeholder="+33 6 12 34 56 78" />
+        <input #phoneInput type="tel" placeholder="+33 6 ..." />
       </div>
-
       @if (createResult(); as cr) {
         <div class="create-success">
           <p class="success-title">✅ Carte créée !</p>
           <p>Numéro : <strong class="serial-code">{{ cr.holder?.serial_number }}</strong></p>
         </div>
       }
-
       <div class="modal-actions">
-        <button class="btn btn-secondary" style="flex:1; justify-content:center;" (click)="closeNewClient()">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" (click)="closeNewClient()">
           {{ createResult() ? 'Fermer' : 'Annuler' }}
         </button>
         @if (!createResult()) {
-          <button class="btn btn-primary" style="flex:1; justify-content:center;"
+          <button class="btn btn-primary" style="flex:1;justify-content:center;"
             (click)="createClient(cardSel.value, nameInput.value, phoneInput.value)"
             [disabled]="!cardSel.value || creating()">
             {{ creating() ? 'Création...' : 'Créer' }}

@@ -11,42 +11,117 @@
 .input-card {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 12px;
+}
 
-  h2 { margin-bottom: 20px; }
+.camera-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  font-size: 15px;
+  background: var(--bg);
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-weight: 500;
+  transition: all 0.15s;
+
+  &:hover { border-color: var(--primary); color: var(--primary); }
+  &.active { border-style: solid; border-color: var(--primary); background: #FFF7F0; color: var(--primary); }
+}
+
+.camera-wrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+
+  zxing-scanner {
+    display: block;
+    width: 100%;
+
+    ::ng-deep video {
+      width: 100% !important;
+      height: 260px !important;
+      object-fit: cover;
+    }
+  }
+}
+
+.camera-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.scan-frame {
+  width: 180px;
+  height: 180px;
+  border: 3px solid var(--primary);
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.scan-hint {
+  color: #fff;
+  font-size: 13px;
+  margin-top: 12px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.camera-select {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  outline: none;
+}
+
+.camera-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 4px 0;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 }
 
 .serial-input {
-  font-size: 20px !important;
+  font-size: 18px !important;
   font-family: monospace !important;
   letter-spacing: 2px;
 }
 
-.hint {
-  color: var(--text-secondary);
-  font-size: 12px;
-  margin-top: 4px;
-  display: block;
-}
+.scan-btn, .full-btn { width: 100%; justify-content: center; }
+.scan-btn { padding: 14px; font-size: 15px; }
+.separator { border-top: 1px solid var(--border); }
 
-.scan-btn {
-  width: 100%;
-  justify-content: center;
-  padding: 14px;
-  font-size: 16px;
-}
-
-.divider {
-  border-top: 1px solid var(--border);
-  margin: 16px 0;
-}
-
-.full-btn {
-  width: 100%;
-  justify-content: center;
-}
-
-// ── Result card ────────────────────────────────────────────
 .result-card {
   min-height: 300px;
   display: flex;
@@ -57,112 +132,61 @@
   &.is-error  { border-color: var(--danger); }
 }
 
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-secondary);
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
 .error-result {
   text-align: center;
   padding: 24px;
-
   .result-icon { font-size: 48px; margin-bottom: 12px; }
-
   h2 { margin-bottom: 8px; }
   p  { color: var(--text-secondary); margin-bottom: 16px; }
 }
 
-// ── Reward ─────────────────────────────────────────────────
-.reward-screen {
-  text-align: center;
-  padding: 16px;
+.reward-screen { text-align: center; padding: 16px; }
+.reward-emoji  { font-size: 64px; margin-bottom: 12px; display: block; animation: bounce 0.5s ease; }
+.reward-desc   { font-size: 20px; font-weight: 700; color: var(--primary); margin: 8px 0; }
+.reward-client { color: var(--text-secondary); font-size: 14px; }
+.reward-badge  {
+  display: inline-block; margin-top: 16px;
+  padding: 10px 20px; background: var(--primary); color: #fff;
+  border-radius: 20px; font-size: 14px; font-weight: 600;
 }
 
-.reward-emoji {
-  font-size: 64px;
-  margin-bottom: 12px;
-  display: block;
-  animation: bounce 0.5s ease;
-}
-
-.reward-desc {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
-  margin: 8px 0;
-}
-
-.reward-client {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.reward-badge {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 10px 20px;
-  background: var(--primary);
-  color: #fff;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-// ── Scan result ────────────────────────────────────────────
-.scan-result-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
+.scan-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .muted { color: var(--text-secondary); font-size: 14px; }
 
-// ── Points ─────────────────────────────────────────────────
-.points-display {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
+.points-display { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
 .points-val  { font-size: 40px; font-weight: 700; color: var(--primary); }
 .points-goal { font-size: 16px; color: var(--text-secondary); }
 
-.progress-bar {
-  height: 10px;
-  background: var(--border);
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
+.progress-bar  { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 5px; transition: width 0.5s ease; }
+.progress-msg  { font-size: 14px; color: var(--text-secondary); }
 
-.progress-fill {
-  height: 100%;
-  background: var(--primary);
-  border-radius: 5px;
-  transition: width 0.5s ease;
-}
-
-.progress-msg { font-size: 14px; color: var(--text-secondary); }
-
-// ── Stamp ──────────────────────────────────────────────────
 .stamp-dot.new-stamp { animation: pop 0.4s ease; }
 
-// ── Modal ──────────────────────────────────────────────────
 .create-success {
-  margin-bottom: 16px;
-  padding: 14px;
-  background: var(--success-bg);
-  border-radius: 10px;
-
+  margin-bottom: 16px; padding: 14px; background: var(--success-bg); border-radius: 10px;
   .success-title { font-weight: 600; color: var(--success); margin-bottom: 4px; }
-  .serial-code { font-family: monospace; font-size: 13px; }
+  .serial-code   { font-family: monospace; font-size: 13px; }
 }
 
-// ── Animations ─────────────────────────────────────────────
-@keyframes bounce {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.2); }
-}
-
-@keyframes pop {
-  0%   { transform: scale(0); }
-  70%  { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
+@keyframes pulse  { 0%,100%{border-color:var(--primary)} 50%{border-color:rgba(255,107,53,0.4)} }
+@keyframes spin   { to { transform: rotate(360deg); } }
+@keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+@keyframes pop    { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
