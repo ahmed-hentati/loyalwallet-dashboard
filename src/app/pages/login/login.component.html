@@ -7,6 +7,14 @@
     </div>
     <p class="tagline">Gérez la fidélité de vos clients</p>
 
+    <!-- Bouton démo -->
+    <button class="btn-demo-cta" (click)="loginDemo()" [disabled]="loading()">
+      <span class="demo-badge">DÉMO</span>
+      {{ loading() ? 'Chargement...' : 'Voir la démo en direct →' }}
+    </button>
+
+    <div class="or-divider"><span>ou connectez-vous</span></div>
+
     <!-- Tabs -->
     <div class="tabs">
       <button [class.active]="mode() === 'login'" (click)="mode.set('login')">Connexion</button>

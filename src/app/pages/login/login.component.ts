@@ -2,6 +2,9 @@ import { Component, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+const DEMO_EMAIL    = 'demo@loyalwallet.app';
+const DEMO_PASSWORD = '1234';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -25,6 +28,18 @@ export class LoginComponent {
     });
   }
 
+  loginDemo() {
+    this.loading.set(true);
+    this.error.set('');
+    this.auth.login(DEMO_EMAIL, DEMO_PASSWORD).subscribe({
+      next: () => this.router.navigate(['/dashboard']),
+      error: () => {
+        this.error.set('Compte démo non disponible pour l\'instant');
+        this.loading.set(false);
+      },
+    });
+  }
+
   register(name: string, email: string, password: string, phone: string) {
     this.loading.set(true);
     this.error.set('');
@@ -34,3 +49,4 @@ export class LoginComponent {
     });
   }
 }
+
