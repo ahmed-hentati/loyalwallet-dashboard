@@ -32,4 +32,15 @@ export class ApiService {
   scan(serialNumber: string) {
     return this.http.post<ScanResult>(`${this.api}/scans`, { serial_number: serialNumber });
   }
+
+  getCampaignPreview() {
+    return this.http.get<{ all: number; inactive: number; near_reward: number }>(`${this.api}/campaigns/preview`);
+  }
+
+  sendCampaign(message: string, audience: string, card_id?: string) {
+    return this.http.post<{ success: boolean; sent: number; errors: number; total: number; message: string }>(
+      `${this.api}/campaigns/send`,
+      { message, audience, ...(card_id ? { card_id } : {}) }
+    );
+  }
 }

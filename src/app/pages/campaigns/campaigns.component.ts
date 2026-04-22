@@ -1,6 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { Stats } from '../../models';
 
 type Audience = 'all' | 'inactive' | 'near_reward';
 
@@ -20,7 +19,6 @@ interface Campaign {
 export class CampaignsComponent implements OnInit {
   private api = inject(ApiService);
 
-  stats      = signal<Stats | null>(null);
   message    = signal('');
   audience   = signal<Audience>('all');
   sending    = signal(false);
@@ -42,15 +40,8 @@ export class CampaignsComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.api.getStats().subscribe(s => {
-      this.stats.set(s);
-      // Estimation des segments
-      const total = s.total_clients;
-      this.counts.set({
-        all:         total,
-        inactive:    Math.floor(total * 0.36),  // ~36% inactifs +30j
-        near_reward: Math.floor(total * 0.22),  // ~22% proches de la récompense
-      });
+    this.api.getCampaignPreview().subscribe(c => {
+      this.counts.set(c);
     });
   }
 
@@ -69,28 +60,29 @@ export class CampaignsComponent implements OnInit {
   setAudience(a: Audience) { this.audience.set(a); }
   setMessage(v: string)    { this.message.set(v); }
 
-  async send() {
+  send() {
     if (!this.message() || this.sending()) return;
     this.sending.set(true);
     this.error.set('');
 
-    // Simuler l'envoi (à brancher sur une vraie API SMS/push)
-    // En production : appel à ton backend qui envoie via Google Wallet API
-    // ou Twilio pour les SMS
-    await new Promise(r => setTimeout(r, 1500));
-
-    this.history.update(h => [{
-      message:    this.message(),
-      audience:   this.audience(),
-      sent_at:    new Date().toLocaleString('fr-FR'),
-      recipients: this.getCount(),
-    }, ...h]);
-
-    this.sending.set(false);
-    this.sent.set(true);
-    this.message.set('');
-
-    setTimeout(() => this.sent.set(false), 4000);
+    this.api.sendCampaign(this.message(), this.audience()).subscribe({
+      next: res => {
+        this.history.update(h => [{
+          message:    this.message(),
+          audience:   this.audience(),
+          sent_at:    new Date().toLocaleString('fr-FR'),
+          recipients: res.sent,
+        }, ...h]);
+        this.sending.set(false);
+        this.sent.set(true);
+        this.message.set('');
+        setTimeout(() => this.sent.set(false), 4000);
+      },
+      error: err => {
+        this.error.set(err.error?.error ?? 'Erreur lors de l\'envoi');
+        this.sending.set(false);
+      },
+    });
   }
 
   charCount(): number { return this.message().length; }
