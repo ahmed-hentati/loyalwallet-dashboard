@@ -1,0 +1,184 @@
+<!-- Chargement -->
+@if (loading()) {
+  <div class="loading-page">
+    <div class="spinner-lg"></div>
+    <p>Chargement de la carte...</p>
+  </div>
+}
+
+<!-- Erreur -->
+@if (error() && !loading()) {
+  <div class="error-page">
+    <div class="error-icon">❌</div>
+    <h2>Carte introuvable</h2>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+<!-- Formulaire d'inscription -->
+@if (card() && !result() && !loading()) {
+  <div class="register-page">
+    <!-- Carte visuelle -->
+    <div class="wallet-card-preview" [style.background]="card().background_color">
+      <div class="wcp-restaurant" [style.color]="card().label_color">
+        {{ card().restaurant_name }}
+      </div>
+      <div class="wcp-name" [style.color]="card().foreground_color">
+        {{ card().name }}
+      </div>
+      @if (card().loyalty_type === 'stamp') {
+        <div class="wcp-stamps">
+        @for (i of stampsArray(); track i) {
+          <div class="wcp-stamp empty"></div>
+        }
+      </div>
+      }
+      <div class="wcp-reward" [style.color]="card().label_color">
+        🎁 {{ card().reward_description }}
+      </div>
+    </div>
+
+    <div class="register-box">
+      <h1>Rejoignez le programme</h1>
+      <p class="register-sub">
+        Obtenez votre carte de fidélité numérique — directement dans votre Wallet
+      </p>
+
+      <div class="form-group">
+        <label>Votre prénom (optionnel)</label>
+        <input
+          type="text"
+          [value]="name()"
+          (input)="name.set($any($event.target).value)"
+          placeholder="Ahmed"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Téléphone (optionnel)</label>
+        <input
+          type="tel"
+          [value]="phone()"
+          (input)="phone.set($any($event.target).value)"
+          placeholder="+33 6 12 34 56 78"
+        />
+      </div>
+
+      @if (error()) {
+        <div class="error-msg">{{ error() }}</div>
+      }
+
+      <button class="btn-register" (click)="register()" [disabled]="submitting()">
+        @if (submitting()) { ⏳ Création en cours... }
+        @else { Obtenir ma carte gratuite }
+      </button>
+
+      <p class="no-app-note">
+        Aucune application à télécharger — fonctionne avec Apple Wallet et Google Wallet
+      </p>
+    </div>
+  </div>
+}
+
+<!-- Résultat : carte créée -->
+@if (result()) {
+  <div class="success-page">
+    <!-- Carte visuelle avec QR -->
+    <div class="wallet-card-preview" [style.background]="result().card.background_color">
+      <div class="wcp-restaurant" [style.color]="result().card.label_color">
+        {{ result().card.restaurant_name }}
+      </div>
+      <div class="wcp-name" [style.color]="result().card.foreground_color">
+        {{ result().card.name }}
+      </div>
+
+      @if (result().card.loyalty_type === 'stamp') {
+        <div class="wcp-stamps">
+          @for (i of stampsArray(); track i) {
+            <div class="wcp-stamp empty"></div>
+          }
+        </div>
+      } @else {
+        <div class="wcp-points" [style.color]="result().card.foreground_color">
+          0 / {{ result().card.points_for_reward }} pts
+        </div>
+      }
+
+      <div class="wcp-reward" [style.color]="result().card.label_color">
+        🎁 {{ result().card.reward_description }}
+      </div>
+    </div>
+
+    <div class="success-box">
+      <div class="success-icon">🎉</div>
+      <h1>Votre carte est prête !</h1>
+      <p class="success-sub">Ajoutez-la à votre Wallet pour l'avoir toujours avec vous</p>
+
+      <!-- Boutons Wallet -->
+      <div class="wallet-buttons">
+
+        <!-- Apple Wallet (iPhone) -->
+        @if (isIOS()) {
+          <a [href]="result().apple_wallet_url" class="wallet-btn apple-btn">
+            <div class="wallet-btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wallet-btn-sub">Ajouter à</div>
+              <div class="wallet-btn-main">Apple Wallet</div>
+            </div>
+          </a>
+        }
+
+        <!-- Google Wallet (Android) -->
+        @if (isAndroid() && result().google_wallet_url) {
+          <a [href]="result().google_wallet_url" class="wallet-btn google-btn">
+            <div class="wallet-btn-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wallet-btn-sub">Ajouter à</div>
+              <div class="wallet-btn-main">Google Wallet</div>
+            </div>
+          </a>
+        }
+
+        <!-- Les deux (desktop ou autre) -->
+        @if (!isIOS() && !isAndroid()) {
+          <a [href]="result().apple_wallet_url" class="wallet-btn apple-btn">
+            <div class="wallet-btn-icon">🍎</div>
+            <div>
+              <div class="wallet-btn-sub">Ajouter à</div>
+              <div class="wallet-btn-main">Apple Wallet</div>
+            </div>
+          </a>
+          @if (result().google_wallet_url) {
+            <a [href]="result().google_wallet_url" class="wallet-btn google-btn">
+              <div class="wallet-btn-icon">G</div>
+              <div>
+                <div class="wallet-btn-sub">Ajouter à</div>
+                <div class="wallet-btn-main">Google Wallet</div>
+              </div>
+            </a>
+          }
+        }
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-section">
+        <p class="qr-label">Votre QR code de fidélité</p>
+        <img [src]="result().qr_code" alt="QR code" class="qr-img" />
+        <p class="qr-sub">Le caissier scannera ce QR à chaque visite</p>
+      </div>
+
+      <!-- Numéro de carte -->
+      <div class="serial-badge">
+        {{ result().holder.serial_number }}
+      </div>
+    </div>
+  </div>
+}

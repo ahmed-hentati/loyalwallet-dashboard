@@ -1,0 +1,239 @@
+.loading-page, .error-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--text-secondary);
+  background: var(--bg);
+}
+
+.spinner-lg {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.error-icon { font-size: 48px; }
+.error-page h2 { color: var(--text); }
+
+// ── Pages communes ─────────────────────────────────────────
+.register-page, .success-page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 40px;
+  gap: 0;
+}
+
+// ── Wallet card preview ────────────────────────────────────
+.wallet-card-preview {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.wcp-restaurant {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.wcp-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.wcp-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.wcp-stamp {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  &.empty { background: rgba(255,255,255,0.25); }
+  &.filled { background: #fff; }
+}
+
+.wcp-points {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.wcp-reward {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+// ── Register box ───────────────────────────────────────────
+.register-box, .success-box {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 28px 24px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.register-box h1, .success-box h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.register-sub, .success-sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.error-msg {
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.btn-register {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  margin-top: 8px;
+
+  &:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.no-app-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+// ── Success ────────────────────────────────────────────────
+.success-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+// ── Wallet buttons ─────────────────────────────────────────
+.wallet-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.wallet-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.15s;
+  border: none;
+  cursor: pointer;
+}
+
+.apple-btn {
+  background: #000;
+  color: #fff;
+
+  &:hover { background: #222; transform: translateY(-1px); }
+}
+
+.google-btn {
+  background: #4285F4;
+  color: #fff;
+
+  &:hover { background: #3367D6; transform: translateY(-1px); }
+}
+
+.wallet-btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.wallet-btn-sub  { font-size: 11px; opacity: 0.7; }
+.wallet-btn-main { font-size: 16px; font-weight: 600; }
+
+// ── QR Section ─────────────────────────────────────────────
+.qr-section {
+  text-align: center;
+  padding: 20px;
+  background: var(--bg);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.qr-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.qr-img {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+}
+
+.qr-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.serial-badge {
+  text-align: center;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: var(--bg);
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

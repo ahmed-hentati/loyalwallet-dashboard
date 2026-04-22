@@ -1,0 +1,235 @@
+.loading-page, .error-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--text-secondary);
+  background: var(--bg);
+}
+
+.spinner-lg {
+  width: 48px; height: 48px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.error-icon { font-size: 48px; }
+.error-page h2 { color: var(--text); }
+
+// ── Page ───────────────────────────────────────────────────
+.card-page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 40px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.card-header {
+  width: 100%;
+  padding: 20px 0 12px;
+  text-align: center;
+}
+
+.restaurant-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+// ── Wallet card ────────────────────────────────────────────
+.wallet-card {
+  width: 100%;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+}
+
+.wc-label {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.wc-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.wc-stamp {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff;
+  transition: all 0.2s;
+
+  &.filled { background: rgba(255,255,255,0.9); color: #333; }
+}
+
+.wc-progress-text {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.wc-points {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.wc-progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.wc-progress-fill {
+  height: 100%;
+  background: rgba(255,255,255,0.8);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.wc-points-sub {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.wc-reward {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+// ── Stats ──────────────────────────────────────────────────
+.stats-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.stat-pill {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-val {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+// ── QR Card ────────────────────────────────────────────────
+.qr-card {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.qr-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.qr-img {
+  width: 180px; height: 180px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.qr-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.serial {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg);
+  padding: 6px 14px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+// ── Wallet actions ─────────────────────────────────────────
+.wallet-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.wallet-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.wallet-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s;
+
+  span { font-size: 18px; }
+}
+
+.apple-btn  { background: #000; color: #fff; &:hover { background: #222; } }
+.google-btn { background: #4285F4; color: #fff; &:hover { background: #3367D6; } }
+
+// ── Footer ─────────────────────────────────────────────────
+.page-footer {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  strong { color: var(--primary); }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

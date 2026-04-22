@@ -1,0 +1,113 @@
+@if (loading()) {
+  <div class="loading-page">
+    <div class="spinner-lg"></div>
+    <p>Chargement de votre carte...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="error-page">
+    <div class="error-icon">❌</div>
+    <h2>Carte introuvable</h2>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+@if (data(); as d) {
+  <div class="card-page">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="restaurant-name">{{ d.card.restaurant_name }}</div>
+    </div>
+
+    <!-- Wallet card visual -->
+    <div class="wallet-card" [style.background]="d.card.background_color">
+      <div class="wc-label" [style.color]="d.card.label_color">
+        {{ d.card.loyalty_type === 'stamp' ? 'Tampons' : 'Points' }}
+      </div>
+
+      @if (d.card.loyalty_type === 'stamp') {
+        <div class="wc-stamps">
+          @for (i of stampsArray(); track i) {
+            <div class="wc-stamp" [class.filled]="i < d.holder.stamps">
+              @if (i < d.holder.stamps) { ✓ }
+            </div>
+          }
+        </div>
+        <div class="wc-progress-text" [style.color]="d.card.foreground_color">
+          {{ d.holder.stamps }} / {{ d.card.stamp_total }} tampons
+        </div>
+      } @else {
+        <div class="wc-points" [style.color]="d.card.foreground_color">
+          {{ d.holder.points }}
+        </div>
+        <div class="wc-progress-bar">
+          <div class="wc-progress-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+        <div class="wc-points-sub" [style.color]="d.card.label_color">
+          / {{ d.card.points_for_reward }} pts pour la récompense
+        </div>
+      }
+
+      <div class="wc-reward" [style.color]="d.card.label_color">
+        🎁 {{ d.card.reward_description }}
+      </div>
+    </div>
+
+    <!-- Stats rapides -->
+    <div class="stats-row">
+      <div class="stat-pill">
+        <span class="stat-val">{{ d.holder.total_visits }}</span>
+        <span class="stat-label">visites</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-val">{{ d.holder.total_rewards }}</span>
+        <span class="stat-label">récompenses</span>
+      </div>
+    </div>
+
+    <!-- QR code -->
+    <div class="qr-card">
+      <p class="qr-title">Mon QR code</p>
+      <img [src]="d.qr_code" alt="QR code" class="qr-img" />
+      <p class="qr-sub">Présentez ce QR code au caissier à chaque visite</p>
+      <div class="serial">{{ d.holder.serial_number }}</div>
+    </div>
+
+    <!-- Boutons Wallet -->
+    <div class="wallet-actions">
+      <p class="wallet-title">Ajouter à mon Wallet</p>
+
+      @if (isIOS()) {
+        <a [href]="d.apple_wallet_url" class="wallet-btn apple-btn">
+          <span>🍎</span> Ajouter à Apple Wallet
+        </a>
+      }
+
+      @if (isAndroid() && d.google_wallet_url) {
+        <a [href]="d.google_wallet_url" class="wallet-btn google-btn">
+          <span>G</span> Ajouter à Google Wallet
+        </a>
+      }
+
+      @if (!isIOS() && !isAndroid()) {
+        <a [href]="d.apple_wallet_url" class="wallet-btn apple-btn">
+          <span>🍎</span> Apple Wallet
+        </a>
+        @if (d.google_wallet_url) {
+          <a [href]="d.google_wallet_url" class="wallet-btn google-btn">
+            <span>G</span> Google Wallet
+          </a>
+        }
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <span>Propulsé par</span>
+      <strong>LoyalWallet</strong>
+    </div>
+
+  </div>
+}

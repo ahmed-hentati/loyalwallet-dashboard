@@ -1,6 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 import { LoyaltyCard } from '../../models';
+import { environment } from '../../../environments/environment';
 
 export interface CardForm {
   card_name: string;
@@ -22,7 +24,8 @@ export interface CardForm {
   styleUrl: './cards.component.scss',
 })
 export class CardsComponent implements OnInit {
-  private api = inject(ApiService);
+  private api  = inject(ApiService);
+  private auth = inject(AuthService);
 
   cards     = signal<LoyaltyCard[]>([]);
   loading   = signal(true);
@@ -30,6 +33,15 @@ export class CardsComponent implements OnInit {
   editingId = signal<string | null>(null);
   saving    = signal(false);
   form      = signal<CardForm>(this.defaultForm());
+
+  // QR modal
+  showQr    = signal(false);
+  qrCard    = signal<LoyaltyCard | null>(null);
+
+  getRegisterUrl(card: LoyaltyCard): string {
+    const restaurantId = this.auth.restaurant()?.id;
+    return `${environment.apiUrl.replace('/api', '')}/register/${restaurantId}/${card.id}`;
+  }
 
   colorFields = [
     { key: 'background_color', label: 'Fond'   },

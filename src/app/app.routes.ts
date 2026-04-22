@@ -7,6 +7,16 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
   },
+  // ── Pages publiques (pas besoin d'être connecté) ──
+  {
+    path: 'register/:restaurantId/:cardId',
+    loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent),
+  },
+  {
+    path: 'card/:serialNumber',
+    loadComponent: () => import('./pages/card-page/card-page.component').then(m => m.CardPageComponent),
+  },
+  // ── Pages protégées ──
   {
     path: '',
     canActivate: [authGuard],

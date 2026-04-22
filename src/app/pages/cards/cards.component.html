@@ -43,7 +43,10 @@
                     : '⭐ Seuil ' + card.points_for_reward + ' pts' }}
                 </span>
               </div>
-              <button class="btn btn-secondary btn-sm" (click)="openEdit(card)">Modifier</button>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-secondary btn-sm" (click)="qrCard.set(card); showQr.set(true)">QR</button>
+                <button class="btn btn-secondary btn-sm" (click)="openEdit(card)">Modifier</button>
+              </div>
             </div>
 
             <p class="rule-text">
@@ -61,7 +64,37 @@
   }
 </div>
 
-<!-- Modal -->
+<!-- Modal QR d'inscription -->
+@if (showQr() && qrCard(); as card) {
+  <div class="modal-backdrop" (click)="showQr.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>QR d'inscription — {{ card.card_name }}</h2>
+        <button class="modal-close" (click)="showQr.set(false)">✕</button>
+      </div>
+      <p style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;">
+        Affichez ce QR code en caisse. Quand un client le scanne, il crée automatiquement sa carte de fidélité et peut l'ajouter à son Wallet.
+      </p>
+      <div style="text-align:center; padding:20px; background:var(--bg); border-radius:12px; margin-bottom:16px;">
+        <!-- QR code généré via l'URL d'inscription -->
+        <div style="font-size:13px; font-family:monospace; word-break:break-all; color:var(--text-secondary);">
+          {{ getRegisterUrl(card) }}
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--text-secondary); text-align:center;">
+        Imprimez cette page ou affichez-la sur votre iPad en caisse
+      </p>
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" (click)="showQr.set(false)">Fermer</button>
+        <a [href]="getRegisterUrl(card)" target="_blank" class="btn btn-primary" style="flex:1;justify-content:center;">
+          Tester le lien
+        </a>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal création / édition -->
 @if (showModal()) {
   <div class="modal-backdrop" (click)="closeModal()">
     <div class="modal modal-wide" (click)="$event.stopPropagation()">
