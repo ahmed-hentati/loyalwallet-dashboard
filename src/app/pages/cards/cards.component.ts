@@ -40,7 +40,8 @@ export class CardsComponent implements OnInit {
 
   getRegisterUrl(card: LoyaltyCard): string {
     const restaurantId = this.auth.restaurant()?.id;
-    return `${environment.apiUrl.replace('/api', '')}/register/${restaurantId}/${card.id}`;
+    const frontendUrl = window.location.origin; // https://loyalwallet-dashboard.vercel.app
+    return `${frontendUrl}/register/${restaurantId}/${card.id}`;
   }
 
   colorFields = [
