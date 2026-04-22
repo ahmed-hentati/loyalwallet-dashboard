@@ -1,0 +1,155 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>📣 Campagnes</h1>
+      <p class="subtitle">Envoyez un message à vos clients fidèles</p>
+    </div>
+  </div>
+
+  <div class="campaigns-layout">
+
+    <!-- Composer -->
+    <div class="card compose-card">
+      <h2 style="margin-bottom: 20px;">Nouveau message</h2>
+
+      <!-- Message -->
+      <div class="form-group">
+        <label>Votre message</label>
+        <textarea
+          [value]="message()"
+          (input)="setMessage($any($event.target).value)"
+          placeholder="Ex: Ce weekend, café offert pour toute commande ☕"
+          rows="4"
+          maxlength="160"
+        ></textarea>
+        <div class="char-count" [class.limit]="charCount() > 140">
+          {{ charCount() }}/160 caractères
+        </div>
+      </div>
+
+      <!-- Audience -->
+      <div class="form-group">
+        <label>Envoyer à</label>
+        <div class="audience-options">
+
+          <button class="audience-btn"
+            [class.active]="audience() === 'all'"
+            (click)="setAudience('all')">
+            <div class="audience-icon">👥</div>
+            <div class="audience-info">
+              <div class="audience-name">Tous mes clients</div>
+              <div class="audience-count">{{ counts().all }} personnes</div>
+            </div>
+            <div class="audience-check" [class.visible]="audience() === 'all'">✓</div>
+          </button>
+
+          <button class="audience-btn"
+            [class.active]="audience() === 'inactive'"
+            (click)="setAudience('inactive')">
+            <div class="audience-icon">😴</div>
+            <div class="audience-info">
+              <div class="audience-name">Clients inactifs</div>
+              <div class="audience-count">{{ counts().inactive }} personnes · pas venus depuis +30j</div>
+            </div>
+            <div class="audience-check" [class.visible]="audience() === 'inactive'">✓</div>
+          </button>
+
+          <button class="audience-btn"
+            [class.active]="audience() === 'near_reward'"
+            (click)="setAudience('near_reward')">
+            <div class="audience-icon">🎯</div>
+            <div class="audience-info">
+              <div class="audience-name">Proches de la récompense</div>
+              <div class="audience-count">{{ counts().near_reward }} personnes · à 1-2 tampons</div>
+            </div>
+            <div class="audience-check" [class.visible]="audience() === 'near_reward'">✓</div>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Aperçu -->
+      @if (message()) {
+        <div class="preview-wrap">
+          <div class="preview-label">Aperçu sur téléphone</div>
+          <div class="notif-preview">
+            <div class="notif-app">
+              <div class="notif-app-icon">🎯</div>
+              <div class="notif-app-name">LoyalWallet</div>
+              <div class="notif-app-time">maintenant</div>
+            </div>
+            <div class="notif-message">{{ message() }}</div>
+          </div>
+        </div>
+      }
+
+      <!-- Erreur -->
+      @if (error()) {
+        <div class="error-msg">{{ error() }}</div>
+      }
+
+      <!-- Succès -->
+      @if (sent()) {
+        <div class="success-msg">
+          ✅ Message envoyé à {{ getCount() }} client{{ getCount() > 1 ? 's' : '' }} !
+        </div>
+      }
+
+      <!-- Envoi -->
+      <button class="btn btn-primary send-btn"
+        (click)="send()"
+        [disabled]="!message() || sending() || getCount() === 0">
+        @if (sending()) {
+          ⏳ Envoi en cours...
+        } @else {
+          📣 Envoyer à {{ getCount() }} {{ audienceLabel() }}
+        }
+      </button>
+
+      <p class="send-note">
+        Le message apparaîtra sur la carte Wallet du client et en notification push.
+      </p>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="right-col">
+
+      <!-- Suggestions -->
+      <div class="card suggestions-card">
+        <h3 style="margin-bottom: 16px;">Idées de messages</h3>
+        <div class="suggestions">
+          @for (s of suggestions; track s) {
+            <button class="suggestion-btn" (click)="setMessage(s)">
+              {{ s }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Historique -->
+      <div class="card history-card">
+        <h3 style="margin-bottom: 16px;">Campagnes envoyées</h3>
+
+        @if (history().length === 0) {
+          <div class="empty-state" style="padding: 24px;">
+            <div class="icon" style="font-size: 32px;">📭</div>
+            <p style="font-size: 14px;">Aucune campagne envoyée</p>
+          </div>
+        } @else {
+          <div class="history-list">
+            @for (h of history(); track h.sent_at) {
+              <div class="history-item">
+                <div class="history-msg">{{ h.message }}</div>
+                <div class="history-meta">
+                  <span class="badge badge-gray">{{ h.recipients }} destinataires</span>
+                  <span class="history-date">{{ h.sent_at }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>
