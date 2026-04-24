@@ -23,9 +23,12 @@
           🔗 Voir la carte
         </button>
         @if (d.holder.phone) {
-          <button class="btn btn-primary" (click)="sendSms()" [disabled]="smsSending()">
+          <button class="btn btn-primary"
+            (click)="sendSms()"
+            [disabled]="smsSending() || smsCooldown() > 0">
             @if (smsSending()) { ⏳ Envoi... }
             @else if (smsDone()) { ✅ SMS envoyé ! }
+            @else if (smsCooldown() > 0) { 📱 Renvoyer ({{ smsCooldown() }}s) }
             @else { 📱 Envoyer le lien }
           </button>
         }

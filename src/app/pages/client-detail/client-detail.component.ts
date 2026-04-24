@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
@@ -8,7 +8,7 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './client-detail.component.html',
   styleUrl: './client-detail.component.scss',
 })
-export class ClientDetailComponent implements OnInit {
+export class ClientDetailComponent implements OnInit, OnDestroy {
   private route  = inject(ActivatedRoute);
   private router = inject(Router);
   private api    = inject(ApiService);
@@ -81,12 +81,14 @@ export class ClientDetailComponent implements OnInit {
     });
   }
 
-  smsSending = signal(false);
-  smsDone    = signal(false);
+  smsSending  = signal(false);
+  smsDone     = signal(false);
+  smsCooldown = signal(0);
+  private cooldownInterval: any;
 
   sendSms() {
     const d = this.data();
-    if (!d?.holder?.phone || this.smsSending()) return;
+    if (!d?.holder?.phone || this.smsSending() || this.smsCooldown() > 0) return;
     this.smsSending.set(true);
 
     this.api.sendClientSms(d.holder.id).subscribe({
@@ -94,9 +96,20 @@ export class ClientDetailComponent implements OnInit {
         this.smsSending.set(false);
         this.smsDone.set(true);
         setTimeout(() => this.smsDone.set(false), 3000);
+        // Démarrer le cooldown de 90 secondes
+        this.smsCooldown.set(90);
+        this.cooldownInterval = setInterval(() => {
+          const val = this.smsCooldown() - 1;
+          this.smsCooldown.set(val);
+          if (val <= 0) clearInterval(this.cooldownInterval);
+        }, 1000);
       },
       error: () => this.smsSending.set(false),
     });
+  }
+
+  ngOnDestroy() {
+    if (this.cooldownInterval) clearInterval(this.cooldownInterval);
   }
 
   openCardPage() {
