@@ -8,6 +8,7 @@ interface Campaign {
   audience: Audience;
   sent_at: string;
   recipients: number;
+  sms_sent: number;
 }
 
 @Component({
@@ -72,6 +73,7 @@ export class CampaignsComponent implements OnInit {
           audience:   this.audience(),
           sent_at:    new Date().toLocaleString('fr-FR'),
           recipients: res.sent,
+          sms_sent:   res.sms_sent ?? 0,
         }, ...h]);
         this.sending.set(false);
         this.sent.set(true);

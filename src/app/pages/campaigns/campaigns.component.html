@@ -92,6 +92,7 @@
       @if (sent()) {
         <div class="success-msg">
           ✅ Message envoyé à {{ getCount() }} client{{ getCount() > 1 ? 's' : '' }} !
+          @if (getCount() > 0) { <span class="sms-count">📱 SMS envoyés aux clients avec numéro</span> }
         </div>
       }
 
@@ -142,6 +143,9 @@
                 <div class="history-msg">{{ h.message }}</div>
                 <div class="history-meta">
                   <span class="badge badge-gray">{{ h.recipients }} destinataires</span>
+                  @if (h.sms_sent > 0) {
+                    <span class="badge badge-sms">📱 {{ h.sms_sent }} SMS</span>
+                  }
                   <span class="history-date">{{ h.sent_at }}</span>
                 </div>
               </div>

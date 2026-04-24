@@ -38,7 +38,7 @@ export class ApiService {
   }
 
   sendCampaign(message: string, audience: string, card_id?: string) {
-    return this.http.post<{ success: boolean; sent: number; errors: number; total: number; message: string }>(
+    return this.http.post<{ success: boolean; sent: number; errors: number; total: number; message: string; sms_sent: number }>(
       `${this.api}/campaigns/send`,
       { message, audience, ...(card_id ? { card_id } : {}) }
     );

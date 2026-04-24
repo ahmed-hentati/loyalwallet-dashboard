@@ -241,3 +241,20 @@ textarea {
   font-size: 11px;
   color: var(--text-secondary);
 }
+
+.badge-sms {
+  background: #F0FDF4;
+  color: #16A34A;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.sms-count {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-top: 4px;
+}
