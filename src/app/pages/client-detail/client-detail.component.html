@@ -23,8 +23,10 @@
           🔗 Voir la carte
         </button>
         @if (d.holder.phone) {
-          <button class="btn btn-primary" (click)="sendSms()">
-            📱 Envoyer le lien
+          <button class="btn btn-primary" (click)="sendSms()" [disabled]="smsSending()">
+            @if (smsSending()) { ⏳ Envoi... }
+            @else if (smsDone()) { ✅ SMS envoyé ! }
+            @else { 📱 Envoyer le lien }
           </button>
         }
       </div>

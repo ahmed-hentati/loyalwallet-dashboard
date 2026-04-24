@@ -81,10 +81,22 @@ export class ClientDetailComponent implements OnInit {
     });
   }
 
+  smsSending = signal(false);
+  smsDone    = signal(false);
+
   sendSms() {
     const d = this.data();
-    if (!d?.holder?.phone) return;
-    this.api.sendClientSms(d.holder.serial_number, d.holder.phone, d.card.name);
+    if (!d?.holder?.phone || this.smsSending()) return;
+    this.smsSending.set(true);
+
+    this.api.sendClientSms(d.holder.id).subscribe({
+      next: () => {
+        this.smsSending.set(false);
+        this.smsDone.set(true);
+        setTimeout(() => this.smsDone.set(false), 3000);
+      },
+      error: () => this.smsSending.set(false),
+    });
   }
 
   openCardPage() {

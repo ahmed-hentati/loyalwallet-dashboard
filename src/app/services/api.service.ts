@@ -45,10 +45,10 @@ export class ApiService {
     return this.http.patch<any>(`${this.api}/clients/${id}`, data);
   }
 
-  sendClientSms(serialNumber: string, phone: string, cardName: string) {
-    const cardUrl = `${window.location.origin}/card/${serialNumber}`;
-    const msg = encodeURIComponent(`Votre carte fidélité ${cardName} : ${cardUrl}`);
-    window.open(`sms:${phone}?body=${msg}`, '_blank');
+  sendClientSms(clientId: string) {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.api}/clients/${clientId}/send-link`, {}
+    );
   }
 
   sendCampaign(message: string, audience: string, card_id?: string) {
