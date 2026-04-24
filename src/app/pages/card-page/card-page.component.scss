@@ -10,7 +10,7 @@
 }
 
 .spinner-lg {
-  width: 48px; height: 48px;
+  width: 44px; height: 44px;
   border: 4px solid var(--border);
   border-top-color: var(--primary);
   border-radius: 50%;
@@ -32,10 +32,31 @@
   margin: 0 auto;
 }
 
+// ── Header ─────────────────────────────────────────────────
 .card-header {
   width: 100%;
   padding: 20px 0 12px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.restaurant-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.restaurant-avatar {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .restaurant-name {
@@ -44,55 +65,96 @@
   color: var(--text);
 }
 
+.bookmark-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover { background: var(--bg-hover); }
+}
+
+// ── Bookmark tip ───────────────────────────────────────────
+.bookmark-tip {
+  width: 100%;
+  background: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #92400E;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #92400E;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+}
+
 // ── Wallet card ────────────────────────────────────────────
 .wallet-card {
   width: 100%;
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 16px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.22);
 }
 
-.wc-label {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 12px;
+.wc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
+
+.wc-restaurant { font-size: 11px; opacity: 0.65; margin-bottom: 2px; }
+.wc-name { font-size: 18px; font-weight: 700; }
+.wc-badge { font-size: 22px; }
 
 .wc-stamps {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
   margin-bottom: 10px;
 }
 
 .wc-stamp {
-  width: 32px; height: 32px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   background: rgba(255,255,255,0.2);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; color: #fff;
-  transition: all 0.2s;
+  font-size: 13px; font-weight: 700; color: #fff;
+  transition: all 0.3s;
 
-  &.filled { background: rgba(255,255,255,0.9); color: #333; }
+  &.filled { background: rgba(255,255,255,0.85); color: #333; }
+  &.new { animation: pop 0.4s ease; }
 }
 
-.wc-progress-text {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.wc-points {
-  font-size: 48px;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: 8px;
-}
+.wc-progress-text { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+
+.wc-points { font-size: 44px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+.wc-pts { font-size: 18px; font-weight: 400; opacity: 0.7; }
 
 .wc-progress-bar {
-  height: 6px;
-  background: rgba(255,255,255,0.25);
+  height: 5px;
+  background: rgba(255,255,255,0.22);
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 6px;
@@ -100,29 +162,68 @@
 
 .wc-progress-fill {
   height: 100%;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.75);
   border-radius: 3px;
-  transition: width 0.5s ease;
+  transition: width 0.6s ease;
 }
 
-.wc-points-sub {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 12px;
+.wc-points-sub { font-size: 12px; opacity: 0.65; margin-bottom: 12px; }
+
+.wc-footer { margin-top: 6px; }
+.wc-reward { font-size: 12px; opacity: 0.65; }
+
+// ── Progress card ──────────────────────────────────────────
+.progress-card {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
 }
 
-.wc-reward {
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.progress-label { font-size: 13px; color: var(--text-secondary); }
+.progress-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.progress-bar-outer {
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.progress-msg {
   font-size: 13px;
-  opacity: 0.7;
-  margin-top: 8px;
+  color: var(--text-secondary);
+  text-align: center;
+  strong { color: var(--text); }
+}
+
+.reward-ready {
+  color: var(--success) !important;
+  font-weight: 600;
 }
 
 // ── Stats ──────────────────────────────────────────────────
 .stats-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .stat-pill {
@@ -130,20 +231,59 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 14px;
+  padding: 14px 10px;
   text-align: center;
 }
 
-.stat-val {
-  display: block;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--primary);
+.stat-val { display: block; font-size: 22px; font-weight: 700; color: var(--text); }
+.stat-label { font-size: 11px; color: var(--text-secondary); }
+
+// ── Wallet section ─────────────────────────────────────────
+.wallet-section {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
 }
 
-.stat-label {
+.wallet-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.wallet-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.wallet-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.15s;
+
+  &:hover { transform: translateY(-1px); }
+}
+
+.apple-btn  { background: #000; color: #fff; }
+.google-btn { background: #4285F4; color: #fff; }
+
+.wb-sub  { font-size: 11px; opacity: 0.7; }
+.wb-main { font-size: 16px; font-weight: 600; }
+
+.wallet-note {
   font-size: 12px;
   color: var(--text-secondary);
+  text-align: center;
 }
 
 // ── QR Card ────────────────────────────────────────────────
@@ -154,19 +294,15 @@
   border-radius: 16px;
   padding: 20px;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
-.qr-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
+.qr-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
 
 .qr-img {
   width: 180px; height: 180px;
   border-radius: 8px;
-  margin-bottom: 12px;
+  margin: 0 auto 12px;
 }
 
 .qr-sub {
@@ -186,50 +322,59 @@
   display: inline-block;
 }
 
-// ── Wallet actions ─────────────────────────────────────────
-.wallet-actions {
+// ── Lien permanent ─────────────────────────────────────────
+.permanent-link-card {
   width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 24px;
 }
 
-.wallet-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  text-align: center;
-  margin-bottom: 4px;
-}
+.pl-icon { font-size: 20px; flex-shrink: 0; }
 
-.wallet-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 16px;
+.pl-content { flex: 1; min-width: 0; }
+
+.pl-title {
+  font-size: 12px;
   font-weight: 600;
-  text-decoration: none;
-  transition: all 0.15s;
-
-  span { font-size: 18px; }
+  color: var(--text-secondary);
+  margin-bottom: 2px;
 }
 
-.apple-btn  { background: #000; color: #fff; &:hover { background: #222; } }
-.google-btn { background: #4285F4; color: #fff; &:hover { background: #3367D6; } }
+.pl-url {
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pl-copy {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  &:hover { background: var(--border); }
+}
 
 // ── Footer ─────────────────────────────────────────────────
 .page-footer {
   font-size: 12px;
   color: var(--text-secondary);
   display: flex;
-  gap: 4px;
+  gap: 5px;
   align-items: center;
-
-  strong { color: var(--primary); }
+  a { color: var(--primary); font-weight: 600; }
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }

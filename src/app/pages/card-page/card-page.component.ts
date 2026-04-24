@@ -13,12 +13,17 @@ export class CardPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private http  = inject(HttpClient);
 
-  data    = signal<any>(null);
-  loading = signal(true);
-  error   = signal('');
+  data             = signal<any>(null);
+  loading          = signal(true);
+  error            = signal('');
+  showBookmarkTip  = signal(false);
+  copied           = signal(false);
+  pageUrl          = '';
 
   ngOnInit() {
     const serial = this.route.snapshot.params['serialNumber'];
+    this.pageUrl = `${window.location.origin}/card/${serial}`;
+
     this.http.get<any>(`${environment.apiUrl}/public/holder/${serial}`).subscribe({
       next: res => { this.data.set(res); this.loading.set(false); },
       error: ()  => { this.error.set('Carte introuvable'); this.loading.set(false); },
@@ -39,6 +44,12 @@ export class CardPageComponent implements OnInit {
     return Math.min(100, (d.holder.points / d.card.points_for_reward) * 100);
   }
 
-  isIOS(): boolean    { return /iPad|iPhone|iPod/.test(navigator.userAgent); }
+  async copyPageUrl() {
+    await navigator.clipboard.writeText(this.pageUrl);
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
+  }
+
+  isIOS(): boolean     { return /iPad|iPhone|iPod/.test(navigator.userAgent); }
   isAndroid(): boolean { return /Android/.test(navigator.userAgent); }
 }

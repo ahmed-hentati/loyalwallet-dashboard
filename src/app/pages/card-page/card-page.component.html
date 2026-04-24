@@ -18,19 +18,39 @@
 
     <!-- Header -->
     <div class="card-header">
-      <div class="restaurant-name">{{ d.card.restaurant_name }}</div>
+      <div class="restaurant-badge">
+        <div class="restaurant-avatar">{{ d.card.restaurant_name[0] }}</div>
+        <div class="restaurant-name">{{ d.card.restaurant_name }}</div>
+      </div>
+      <button class="bookmark-btn" (click)="showBookmarkTip.set(!showBookmarkTip())" title="Mettre en favori">
+        🔖
+      </button>
     </div>
+
+    <!-- Tip favori -->
+    @if (showBookmarkTip()) {
+      <div class="bookmark-tip">
+        💡 <strong>Astuce :</strong> Ajoutez cette page à vos favoris pour retrouver votre carte à tout moment.
+        <button (click)="showBookmarkTip.set(false)">✕</button>
+      </div>
+    }
 
     <!-- Wallet card visual -->
     <div class="wallet-card" [style.background]="d.card.background_color">
-      <div class="wc-label" [style.color]="d.card.label_color">
-        {{ d.card.loyalty_type === 'stamp' ? 'Tampons' : 'Points' }}
+      <div class="wc-top">
+        <div>
+          <div class="wc-restaurant" [style.color]="d.card.label_color">{{ d.card.restaurant_name }}</div>
+          <div class="wc-name" [style.color]="d.card.foreground_color">{{ d.card.name }}</div>
+        </div>
+        <div class="wc-badge" [style.color]="d.card.label_color">
+          {{ d.card.loyalty_type === 'stamp' ? '🎴' : '⭐' }}
+        </div>
       </div>
 
       @if (d.card.loyalty_type === 'stamp') {
         <div class="wc-stamps">
           @for (i of stampsArray(); track i) {
-            <div class="wc-stamp" [class.filled]="i < d.holder.stamps">
+            <div class="wc-stamp" [class.filled]="i < d.holder.stamps" [class.new]="i === d.holder.stamps - 1">
               @if (i < d.holder.stamps) { ✓ }
             </div>
           }
@@ -41,72 +61,133 @@
       } @else {
         <div class="wc-points" [style.color]="d.card.foreground_color">
           {{ d.holder.points }}
+          <span class="wc-pts" [style.color]="d.card.label_color">pts</span>
         </div>
         <div class="wc-progress-bar">
           <div class="wc-progress-fill" [style.width.%]="progressPercent()"></div>
         </div>
         <div class="wc-points-sub" [style.color]="d.card.label_color">
-          / {{ d.card.points_for_reward }} pts pour la récompense
+          encore {{ d.card.points_for_reward - d.holder.points }} pts pour la récompense
         </div>
       }
 
-      <div class="wc-reward" [style.color]="d.card.label_color">
-        🎁 {{ d.card.reward_description }}
+      <div class="wc-footer">
+        <div class="wc-reward" [style.color]="d.card.label_color">🎁 {{ d.card.reward_description }}</div>
       </div>
     </div>
 
-    <!-- Stats rapides -->
+    <!-- Progression -->
+    @if (d.card.loyalty_type === 'stamp') {
+      <div class="progress-card">
+        <div class="progress-info">
+          <span class="progress-label">Progression</span>
+          <span class="progress-value">{{ d.holder.stamps }} / {{ d.card.stamp_total }}</span>
+        </div>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" [style.width.%]="progressPercent()"></div>
+        </div>
+        @if (d.card.stamp_total - d.holder.stamps > 0) {
+          <p class="progress-msg">
+            encore <strong>{{ d.card.stamp_total - d.holder.stamps }} tampon{{ d.card.stamp_total - d.holder.stamps > 1 ? 's' : '' }}</strong> pour votre récompense
+          </p>
+        } @else {
+          <p class="progress-msg reward-ready">🎉 Récompense disponible !</p>
+        }
+      </div>
+    }
+
+    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-pill">
         <span class="stat-val">{{ d.holder.total_visits }}</span>
-        <span class="stat-label">visites</span>
+        <span class="stat-label">visite{{ d.holder.total_visits > 1 ? 's' : '' }}</span>
       </div>
       <div class="stat-pill">
-        <span class="stat-val">{{ d.holder.total_rewards }}</span>
-        <span class="stat-label">récompenses</span>
+        <span class="stat-val" style="color: var(--success)">{{ d.holder.total_rewards }}</span>
+        <span class="stat-label">récompense{{ d.holder.total_rewards > 1 ? 's' : '' }}</span>
       </div>
+      <div class="stat-pill">
+        <span class="stat-val" style="color: var(--primary)">
+          {{ d.card.loyalty_type === 'stamp' ? d.holder.stamps : d.holder.points }}
+        </span>
+        <span class="stat-label">{{ d.card.loyalty_type === 'stamp' ? 'tampons' : 'points' }}</span>
+      </div>
+    </div>
+
+    <!-- Boutons Wallet -->
+    <div class="wallet-section">
+      <p class="wallet-title">Gardez votre carte dans votre téléphone</p>
+      <div class="wallet-buttons">
+        @if (isIOS()) {
+          <a [href]="d.apple_wallet_url" class="wallet-btn apple-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            <div>
+              <div class="wb-sub">Ajouter à</div>
+              <div class="wb-main">Apple Wallet</div>
+            </div>
+          </a>
+        }
+
+        @if (isAndroid() && d.google_wallet_url) {
+          <a [href]="d.google_wallet_url" class="wallet-btn google-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/>
+            </svg>
+            <div>
+              <div class="wb-sub">Ajouter à</div>
+              <div class="wb-main">Google Wallet</div>
+            </div>
+          </a>
+        }
+
+        @if (!isIOS() && !isAndroid()) {
+          <a [href]="d.apple_wallet_url" class="wallet-btn apple-btn">
+            <span>🍎</span>
+            <div>
+              <div class="wb-sub">Ajouter à</div>
+              <div class="wb-main">Apple Wallet</div>
+            </div>
+          </a>
+          @if (d.google_wallet_url) {
+            <a [href]="d.google_wallet_url" class="wallet-btn google-btn">
+              <span style="font-weight:700; font-size:18px;">G</span>
+              <div>
+                <div class="wb-sub">Ajouter à</div>
+                <div class="wb-main">Google Wallet</div>
+              </div>
+            </a>
+          }
+        }
+      </div>
+      <p class="wallet-note">Votre carte sera toujours à portée de main</p>
     </div>
 
     <!-- QR code -->
     <div class="qr-card">
-      <p class="qr-title">Mon QR code</p>
+      <p class="qr-title">Mon QR code de fidélité</p>
       <img [src]="d.qr_code" alt="QR code" class="qr-img" />
-      <p class="qr-sub">Présentez ce QR code au caissier à chaque visite</p>
+      <p class="qr-sub">Le caissier scanne ce QR à chaque visite pour créditer vos tampons</p>
       <div class="serial">{{ d.holder.serial_number }}</div>
     </div>
 
-    <!-- Boutons Wallet -->
-    <div class="wallet-actions">
-      <p class="wallet-title">Ajouter à mon Wallet</p>
-
-      @if (isIOS()) {
-        <a [href]="d.apple_wallet_url" class="wallet-btn apple-btn">
-          <span>🍎</span> Ajouter à Apple Wallet
-        </a>
-      }
-
-      @if (isAndroid() && d.google_wallet_url) {
-        <a [href]="d.google_wallet_url" class="wallet-btn google-btn">
-          <span>G</span> Ajouter à Google Wallet
-        </a>
-      }
-
-      @if (!isIOS() && !isAndroid()) {
-        <a [href]="d.apple_wallet_url" class="wallet-btn apple-btn">
-          <span>🍎</span> Apple Wallet
-        </a>
-        @if (d.google_wallet_url) {
-          <a [href]="d.google_wallet_url" class="wallet-btn google-btn">
-            <span>G</span> Google Wallet
-          </a>
-        }
-      }
+    <!-- Lien permanent -->
+    <div class="permanent-link-card">
+      <div class="pl-icon">🔗</div>
+      <div class="pl-content">
+        <div class="pl-title">Lien permanent de votre carte</div>
+        <div class="pl-url">{{ pageUrl }}</div>
+      </div>
+      <button class="pl-copy" (click)="copyPageUrl()">
+        {{ copied() ? '✅' : '📋' }}
+      </button>
     </div>
 
     <!-- Footer -->
     <div class="page-footer">
       <span>Propulsé par</span>
-      <strong>LoyalWallet</strong>
+      <a href="https://loyalwallet.hentati.me" target="_blank"><strong>LoyalWallet</strong></a>
     </div>
 
   </div>
