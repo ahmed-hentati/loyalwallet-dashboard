@@ -1,0 +1,115 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>⚡ Automations</h1>
+      <p class="subtitle">Des SMS automatiques qui travaillent pour vous, même quand vous dormez</p>
+    </div>
+    @if (saved()) {
+      <div class="saved-badge">✅ Sauvegardé</div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state"><div class="spinner"></div></div>
+  } @else {
+
+  <div class="automations-grid">
+
+    <!-- Automation 1 : Clients inactifs -->
+    <div class="automation-card" [class.active]="inactiveEnabled()">
+      <div class="auto-header">
+        <div class="auto-icon">😴</div>
+        <div class="auto-toggle">
+          <label class="toggle">
+            <input type="checkbox" [checked]="inactiveEnabled()" (change)="toggle('inactive')" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <h3>Clients inactifs</h3>
+      <p class="auto-desc">
+        Un SMS est envoyé automatiquement aux clients qui n'ont pas visité depuis <strong>14 jours</strong>.
+      </p>
+      <div class="auto-example">
+        <div class="example-label">Message envoyé :</div>
+        <div class="example-msg">
+          "Bonjour Ahmed, on ne vous a pas vu depuis 2 semaines chez Chez Marco. Votre carte vous attend : [lien]"
+        </div>
+      </div>
+      <div class="auto-stats">
+        <div class="auto-stat">
+          <span class="stat-icon">⏰</span>
+          Tous les jours à 10h
+        </div>
+        <div class="auto-stat">
+          <span class="stat-icon">🔁</span>
+          Max 1 SMS / 7 jours / client
+        </div>
+      </div>
+      <div class="auto-status" [class.on]="inactiveEnabled()">
+        {{ inactiveEnabled() ? '🟢 Activée' : '⚪ Désactivée' }}
+      </div>
+    </div>
+
+    <!-- Automation 2 : Proche de la récompense -->
+    <div class="automation-card" [class.active]="nearRewardEnabled()">
+      <div class="auto-header">
+        <div class="auto-icon">🎯</div>
+        <div class="auto-toggle">
+          <label class="toggle">
+            <input type="checkbox" [checked]="nearRewardEnabled()" (change)="toggle('near_reward')" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <h3>Proche de la récompense</h3>
+      <p class="auto-desc">
+        Un SMS est envoyé aux clients à <strong>1 tampon</strong> de leur récompense pour les encourager à revenir.
+      </p>
+      <div class="auto-example">
+        <div class="example-label">Message envoyé :</div>
+        <div class="example-msg">
+          "Chez Marco Ahmed : plus qu'1 tampon pour votre recompense "1 repas offert" ! [lien]"
+        </div>
+      </div>
+      <div class="auto-stats">
+        <div class="auto-stat">
+          <span class="stat-icon">⏰</span>
+          Tous les jours à 10h
+        </div>
+        <div class="auto-stat">
+          <span class="stat-icon">🔁</span>
+          Max 1 SMS / 7 jours / client
+        </div>
+      </div>
+      <div class="auto-status" [class.on]="nearRewardEnabled()">
+        {{ nearRewardEnabled() ? '🟢 Activée' : '⚪ Désactivée' }}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Note importante -->
+  <div class="info-box">
+    <span>ℹ️</span>
+    <div>
+      <strong>Seuls les clients avec un numéro de téléphone reçoivent les SMS.</strong>
+      Pensez à collecter les numéros lors de l'inscription en caisse.
+    </div>
+  </div>
+
+  <!-- Test manuel -->
+  <div class="test-section">
+    <div>
+      <div class="test-title">Tester les automations</div>
+      <div class="test-desc">Déclenche les automations maintenant pour vérifier que tout fonctionne.</div>
+    </div>
+    <button class="btn btn-secondary test-btn" (click)="test()" [disabled]="testing()">
+      @if (testing()) { ⏳ En cours... }
+      @else if (testDone()) { ✅ Déclenché ! }
+      @else { ▶ Lancer maintenant }
+    </button>
+  </div>
+
+  }
+</div>

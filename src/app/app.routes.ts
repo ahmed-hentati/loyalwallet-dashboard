@@ -28,6 +28,7 @@ export const routes: Routes = [
       { path: 'clients',   loadComponent: () => import('./pages/clients/clients.component').then(m => m.ClientsComponent) },
       { path: 'clients/:id', loadComponent: () => import('./pages/client-detail/client-detail.component').then(m => m.ClientDetailComponent) },
       { path: 'campaigns', loadComponent: () => import('./pages/campaigns/campaigns.component').then(m => m.CampaignsComponent) },
+      { path: 'automations', loadComponent: () => import('./pages/automations/automations.component').then(m => m.AutomationsComponent) },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },

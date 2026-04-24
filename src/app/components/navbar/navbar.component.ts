@@ -17,6 +17,7 @@ export class NavbarComponent {
     { path: '/scanner',   icon: '📷', label: 'Scanner'    },
     { path: '/cards',     icon: '🎴', label: 'Mes cartes' },
     { path: '/clients',   icon: '👥', label: 'Clients'    },
-    { path: '/campaigns', icon: '📣', label: 'Campagnes'  },
+    { path: '/campaigns',   icon: '📣', label: 'Campagnes'    },
+    { path: '/automations', icon: '⚡', label: 'Automations'  },
   ];
 }
