@@ -1,0 +1,194 @@
+@if (loading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="error-state">
+    <p>{{ error() }}</p>
+    <button class="btn btn-secondary" (click)="goBack()">← Retour</button>
+  </div>
+}
+
+@if (data(); as d) {
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <button class="back-btn" (click)="goBack()">← Clients</button>
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="openCardPage()">
+          🔗 Voir la carte
+        </button>
+        @if (d.holder.phone) {
+          <button class="btn btn-primary" (click)="sendSms()">
+            📱 Envoyer le lien
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="detail-layout">
+
+      <!-- Colonne gauche -->
+      <div class="left-col">
+
+        <!-- Profil client -->
+        <div class="card profile-card">
+          <div class="profile-avatar">{{ (d.holder.name || 'C')[0].toUpperCase() }}</div>
+
+          <!-- Nom -->
+          @if (!editName()) {
+            <div class="profile-name-row">
+              <h2>{{ d.holder.name || 'Client anonyme' }}</h2>
+              <button class="edit-btn" (click)="editName.set(true); nameInput.set(d.holder.name || '')">✏️</button>
+            </div>
+          } @else {
+            <div class="edit-row">
+              <input [value]="nameInput()" (input)="nameInput.set($any($event.target).value)" placeholder="Prénom" class="edit-input" />
+              <button class="btn btn-primary btn-sm" (click)="saveName()" [disabled]="saving()">✓</button>
+              <button class="btn btn-secondary btn-sm" (click)="editName.set(false)">✕</button>
+            </div>
+          }
+
+          <div class="profile-serial">{{ d.holder.serial_number }}</div>
+          <div class="profile-since">Client depuis le {{ formatDate(d.holder.created_at) }}</div>
+
+          <!-- Téléphone -->
+          <div class="phone-section">
+            @if (!d.holder.phone && !editPhone()) {
+              <button class="add-phone-btn" (click)="editPhone.set(true)">
+                + Ajouter un numéro de téléphone
+              </button>
+            } @else if (!editPhone()) {
+              <div class="phone-row">
+                <span class="phone-icon">📱</span>
+                <span class="phone-number">{{ d.holder.phone }}</span>
+                <button class="edit-btn" (click)="editPhone.set(true); phoneInput.set(d.holder.phone)">✏️</button>
+              </div>
+            }
+
+            @if (editPhone()) {
+              <div class="edit-row">
+                <input
+                  type="tel"
+                  [value]="phoneInput()"
+                  (input)="phoneInput.set($any($event.target).value)"
+                  placeholder="+33 6 12 34 56 78"
+                  class="edit-input"
+                />
+                <button class="btn btn-primary btn-sm" (click)="savePhone()" [disabled]="saving()">
+                  {{ saving() ? '...' : '✓' }}
+                </button>
+                <button class="btn btn-secondary btn-sm" (click)="editPhone.set(false)">✕</button>
+              </div>
+            }
+
+            @if (saved()) {
+              <div class="saved-msg">✅ Numéro sauvegardé !</div>
+            }
+          </div>
+        </div>
+
+        <!-- Carte visuelle -->
+        <div class="card">
+          <h3 class="card-section-title">Carte</h3>
+          <div class="wallet-card" [style.background]="d.card.background_color">
+            <div class="wc-name" [style.color]="d.card.foreground_color">{{ d.card.name }}</div>
+
+            @if (d.card.loyalty_type === 'stamp') {
+              <div class="wc-stamps">
+                @for (i of stampsArray(); track i) {
+                  <div class="wc-stamp" [class.filled]="i < d.holder.stamps">
+                    @if (i < d.holder.stamps) { ✓ }
+                  </div>
+                }
+              </div>
+              <div class="wc-progress" [style.color]="d.card.foreground_color">
+                {{ d.holder.stamps }} / {{ d.card.stamp_total }} tampons
+              </div>
+            } @else {
+              <div class="wc-points" [style.color]="d.card.foreground_color">
+                {{ d.holder.points }} <span style="font-size:16px; opacity:0.7">pts</span>
+              </div>
+              <div class="wc-bar-outer">
+                <div class="wc-bar-inner" [style.width.%]="progressPercent()"></div>
+              </div>
+            }
+
+            <div class="wc-reward" [style.color]="d.card.label_color">🎁 {{ d.card.reward_description }}</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="right-col">
+
+        <!-- Stats -->
+        <div class="card stats-card">
+          <div class="stat-item">
+            <div class="stat-val">{{ d.holder.total_visits }}</div>
+            <div class="stat-label">Visites totales</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-val" style="color: var(--success)">{{ d.holder.total_rewards }}</div>
+            <div class="stat-label">Récompenses</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-val" style="color: var(--primary)">
+              {{ d.card.loyalty_type === 'stamp' ? d.holder.stamps : d.holder.points }}
+            </div>
+            <div class="stat-label">{{ d.card.loyalty_type === 'stamp' ? 'Tampons' : 'Points' }}</div>
+          </div>
+        </div>
+
+        <!-- Historique des scans -->
+        <div class="card">
+          <h3 class="card-section-title">Historique des visites</h3>
+
+          @if (d.scans.length === 0) {
+            <div class="empty-state">
+              <div class="icon">📋</div>
+              <p>Aucune visite enregistrée</p>
+            </div>
+          } @else {
+            <div class="scans-list">
+              @for (scan of d.scans; track scan.id) {
+                <div class="scan-item">
+                  <div class="scan-icon">
+                    @if (scan.reward_triggered) { 🎉 } @else { ✓ }
+                  </div>
+                  <div class="scan-info">
+                    <div class="scan-title">
+                      @if (scan.reward_triggered) {
+                        Récompense débloquée !
+                      } @else if (d.card.loyalty_type === 'stamp') {
+                        +{{ scan.stamps_earned }} tampon{{ scan.stamps_earned > 1 ? 's' : '' }}
+                      } @else {
+                        +{{ scan.points_earned }} point{{ scan.points_earned > 1 ? 's' : '' }}
+                      }
+                    </div>
+                    <div class="scan-date">{{ formatDate(scan.created_at) }}</div>
+                  </div>
+                  <div class="scan-after">
+                    @if (d.card.loyalty_type === 'stamp') {
+                      {{ scan.stamps_after }}/{{ d.card.stamp_total }}
+                    } @else {
+                      {{ scan.points_after }} pts
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  </div>
+}

@@ -26,6 +26,7 @@ export const routes: Routes = [
       { path: 'scanner',   loadComponent: () => import('./pages/scanner/scanner.component').then(m => m.ScannerComponent) },
       { path: 'cards',     loadComponent: () => import('./pages/cards/cards.component').then(m => m.CardsComponent) },
       { path: 'clients',   loadComponent: () => import('./pages/clients/clients.component').then(m => m.ClientsComponent) },
+      { path: 'clients/:id', loadComponent: () => import('./pages/client-detail/client-detail.component').then(m => m.ClientDetailComponent) },
       { path: 'campaigns', loadComponent: () => import('./pages/campaigns/campaigns.component').then(m => m.CampaignsComponent) },
     ],
   },

@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { CardHolder, LoyaltyCard } from '../../models';
 
@@ -9,7 +10,8 @@ import { CardHolder, LoyaltyCard } from '../../models';
   styleUrl: './clients.component.scss',
 })
 export class ClientsComponent implements OnInit, OnDestroy {
-  private api = inject(ApiService);
+  private api    = inject(ApiService);
+  private router = inject(Router);
 
   clients      = signal<CardHolder[]>([]);
   allCards     = signal<LoyaltyCard[]>([]);
@@ -58,5 +60,9 @@ export class ClientsComponent implements OnInit, OnDestroy {
   closeModal() {
     this.showModal.set(false);
     this.createResult.set(null);
+  }
+
+  openClient(id: string) {
+    this.router.navigate(['/clients', id]);
   }
 }

@@ -92,3 +92,9 @@
   .success-title { font-weight: 600; color: var(--success); margin-bottom: 4px; }
   .serial-code   { font-family: monospace; font-size: 13px; }
 }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: var(--bg-hover, #F5F4F1); }
+}

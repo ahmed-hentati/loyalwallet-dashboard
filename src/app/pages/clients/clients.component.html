@@ -46,7 +46,7 @@
           </thead>
           <tbody>
             @for (c of clients(); track c.id) {
-              <tr>
+              <tr class="clickable-row" (click)="openClient(c.id)">
                 <td>
                   <div class="client-cell">
                     <div class="avatar">{{ (c.name || '?')[0].toUpperCase() }}</div>

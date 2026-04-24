@@ -1,0 +1,259 @@
+.loading-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 16px;
+  color: var(--text-secondary);
+}
+
+// ── Layout ─────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.15s;
+  font-family: inherit;
+  &:hover { color: var(--text); }
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.left-col, .right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Profile card ───────────────────────────────────────────
+.profile-card {
+  text-align: center;
+  padding: 28px 24px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+
+  h2 { font-size: 20px; font-weight: 700; }
+}
+
+.profile-serial {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg);
+  padding: 4px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.profile-since {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+// ── Phone ──────────────────────────────────────────────────
+.phone-section { width: 100%; }
+
+.add-phone-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--bg);
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  &:hover { background: #FFF7F0; border-color: var(--primary); }
+}
+
+.phone-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.phone-icon { font-size: 16px; }
+.phone-number { font-size: 14px; font-weight: 500; flex: 1; }
+
+.edit-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.edit-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  &:focus { border-color: var(--primary); }
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.5;
+  padding: 4px;
+  &:hover { opacity: 1; }
+}
+
+.saved-msg {
+  font-size: 13px;
+  color: var(--success);
+  margin-top: 8px;
+  text-align: center;
+}
+
+// ── Section title ──────────────────────────────────────────
+.card-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+// ── Wallet card ────────────────────────────────────────────
+.wallet-card {
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.wc-name { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+
+.wc-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.wc-stamp {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+  &.filled { background: rgba(255,255,255,0.85); color: #333; }
+}
+
+.wc-progress { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.wc-points { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+
+.wc-bar-outer {
+  height: 5px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; margin-bottom: 8px;
+}
+.wc-bar-inner { height: 100%; background: rgba(255,255,255,0.7); border-radius: 3px; transition: width 0.5s; }
+.wc-reward { font-size: 12px; opacity: 0.65; margin-top: 6px; }
+
+// ── Stats ──────────────────────────────────────────────────
+.stats-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.stat-item { flex: 1; text-align: center; }
+
+.stat-val {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-title);
+}
+
+.stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+}
+
+// ── Scans ──────────────────────────────────────────────────
+.scans-list { display: flex; flex-direction: column; gap: 0; }
+
+.scan-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+
+  &:last-child { border-bottom: none; }
+}
+
+.scan-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.scan-info { flex: 1; }
+.scan-title { font-size: 14px; font-weight: 500; }
+.scan-date { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+.scan-after {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}

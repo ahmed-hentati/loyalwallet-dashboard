@@ -37,6 +37,20 @@ export class ApiService {
     return this.http.get<{ all: number; inactive: number; near_reward: number }>(`${this.api}/campaigns/preview`);
   }
 
+  getClientDetail(id: string) {
+    return this.http.get<any>(`${this.api}/clients/${id}`);
+  }
+
+  updateClient(id: string, data: { phone?: string; name?: string; email?: string }) {
+    return this.http.patch<any>(`${this.api}/clients/${id}`, data);
+  }
+
+  sendClientSms(serialNumber: string, phone: string, cardName: string) {
+    const cardUrl = `${window.location.origin}/card/${serialNumber}`;
+    const msg = encodeURIComponent(`Votre carte fidélité ${cardName} : ${cardUrl}`);
+    window.open(`sms:${phone}?body=${msg}`, '_blank');
+  }
+
   sendCampaign(message: string, audience: string, card_id?: string) {
     return this.http.post<{ success: boolean; sent: number; errors: number; total: number; message: string; sms_sent: number }>(
       `${this.api}/campaigns/send`,
