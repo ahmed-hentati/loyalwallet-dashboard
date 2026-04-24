@@ -37,11 +37,36 @@ export class CardsComponent implements OnInit {
   // QR modal
   showQr    = signal(false);
   qrCard    = signal<LoyaltyCard | null>(null);
+  qrDataUrl = signal<string>('');
+  phoneInput = signal('');
+  copied    = signal(false);
 
   getRegisterUrl(card: LoyaltyCard): string {
     const restaurantId = this.auth.restaurant()?.id;
-    const frontendUrl = window.location.origin; // https://loyalwallet-dashboard.vercel.app
-    return `${frontendUrl}/register/${restaurantId}/${card.id}`;
+    return `${window.location.origin}/register/${restaurantId}/${card.id}`;
+  }
+
+  openQr(card: LoyaltyCard) {
+    this.qrCard.set(card);
+    this.qrDataUrl.set('');
+    this.phoneInput.set('');
+    this.copied.set(false);
+    this.showQr.set(true);
+    const url = encodeURIComponent(this.getRegisterUrl(card));
+    this.qrDataUrl.set(`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${url}`);
+  }
+
+  sendSms(card: LoyaltyCard, phone: string) {
+    if (!phone) return;
+    const url = this.getRegisterUrl(card);
+    const msg = encodeURIComponent(`Voici votre carte de fidélité ${card.card_name} 🎯 Ajoutez-la à votre Wallet : ${url}`);
+    window.open(`sms:${phone}?body=${msg}`, '_blank');
+  }
+
+  async copyLink(card: LoyaltyCard) {
+    await navigator.clipboard.writeText(this.getRegisterUrl(card));
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
   }
 
   colorFields = [
