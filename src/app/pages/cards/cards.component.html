@@ -13,22 +13,26 @@
 
   <!-- Liste des cartes -->
   <div class="cards-grid">
-    @for (card of cards(); track card.id) {
+    @for (card of cardsWithStyle(); track card.id) {
       <div class="card-item">
 
         <!-- Preview carte -->
         <div class="card-preview"
-          [style.background]="cardBackground({ background_color: card.background_color, background_gradient: $any(card).background_gradient, foreground_color: card.foreground_color, label_color: card.label_color, card_pattern: $any(card).card_pattern ?? 'none', logo_emoji: $any(card).logo_emoji ?? '🎯', card_name: card.card_name, loyalty_type: card.loyalty_type, stamp_total: card.stamp_total, stamp_per_visit: card.stamp_per_visit, points_per_visit: card.points_per_visit, points_for_reward: card.points_for_reward, reward_description: card.reward_description })">
+          [style.background]="card.bg">
           <div class="cp-pattern"
-            [style.background-image]="patternSvg($any(card).card_pattern ?? 'none', card.foreground_color)">
+            [style.background-image]="card.pat">
           </div>
           <div class="cp-top">
-            <span class="cp-emoji">{{ $any(card).logo_emoji ?? '🎯' }}</span>
+            @if ($any(card).logo_url) {
+              <img [src]="$any(card).logo_url" alt="Logo" class="cp-logo-img" />
+            } @else {
+              <span class="cp-emoji">{{ $any(card).logo_emoji ?? '🎯' }}</span>
+            }
             <span class="cp-name" [style.color]="card.foreground_color">{{ card.card_name }}</span>
           </div>
           @if (card.loyalty_type === 'stamp') {
             <div class="cp-stamps">
-              @for (i of stampsArray(card.stamp_total); track i) {
+              @for (i of card.stamps; track i) {
                 <div class="cp-stamp" [style.border-color]="card.foreground_color" [style.opacity]="i < 4 ? 1 : 0.3">
                   @if (i < 4) { <span [style.color]="card.foreground_color">✓</span> }
                 </div>
@@ -207,18 +211,53 @@
                 </div>
               </div>
 
-              <!-- Logo emoji -->
+              <!-- Logo : upload ou emoji -->
               <div class="form-group">
-                <label>Icône</label>
-                <div class="emoji-grid">
-                  @for (e of emojis; track e) {
-                    <button class="emoji-btn" [class.active]="form().logo_emoji === e"
-                      (click)="updateForm('logo_emoji', e)">
-                      {{ e }}
-                    </button>
-                  }
-                </div>
+                <label>Logo</label>
+
+                @if (logoPreview() || form().logo_url) {
+                  <!-- Logo uploadé -->
+                  <div class="logo-preview-wrap">
+                    <img [src]="logoPreview() || form().logo_url" alt="Logo" class="logo-preview-img" />
+                    <div class="logo-preview-info">
+                      <div class="logo-preview-label">Logo uploadé ✅</div>
+                      <button class="logo-remove-btn" (click)="removeLogo()">Supprimer</button>
+                    </div>
+                  </div>
+                } @else {
+                  <!-- Upload zone -->
+                  <label class="logo-upload-zone">
+                    <input type="file" accept="image/*"
+                      (change)="onLogoSelected($event, editingId() ?? undefined)"
+                      class="logo-file-input" />
+                    @if (uploadingLogo()) {
+                      <div class="logo-uploading">⏳ Upload en cours...</div>
+                    } @else {
+                      <div class="logo-upload-content">
+                        <div class="logo-upload-icon">📸</div>
+                        <div class="logo-upload-text">Cliquez pour uploader votre logo</div>
+                        <div class="logo-upload-sub">PNG, JPG — max 5MB — carré recommandé</div>
+                      </div>
+                    }
+                  </label>
+                }
+
+                <div class="logo-or-divider"><span>ou choisir un emoji</span></div>
               </div>
+
+              <!-- Emoji grid (si pas de logo) -->
+              @if (!form().logo_url) {
+                <div class="form-group">
+                  <div class="emoji-grid">
+                    @for (e of emojis; track e) {
+                      <button class="emoji-btn" [class.active]="form().logo_emoji === e"
+                        (click)="updateForm('logo_emoji', e); updateForm('logo_url', '')">
+                        {{ e }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
 
               <!-- Couleurs -->
               <div class="form-group">
@@ -278,7 +317,11 @@
 
             <!-- Contenu -->
             <div class="preview-top">
-              <span class="preview-emoji">{{ form().logo_emoji }}</span>
+              @if (logoPreview() || form().logo_url) {
+                <img [src]="logoPreview() || form().logo_url" alt="Logo" class="preview-logo-img" />
+              } @else {
+                <span class="preview-emoji">{{ form().logo_emoji }}</span>
+              }
               <span class="preview-name" [style.color]="form().foreground_color">
                 {{ form().card_name || 'Nom de la carte' }}
               </span>
