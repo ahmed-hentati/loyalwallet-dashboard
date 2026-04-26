@@ -91,8 +91,12 @@
           @for (bar of chartBars(); track bar.day) {
             <div class="chart-col">
               <div class="chart-bar-wrap">
-                <div class="chart-bar" [style.height.%]="bar.height" [title]="bar.visits + ' visites'">
-                  <div class="chart-tooltip">{{ bar.visits }}</div>
+                <div class="chart-bar"
+                  [style.height]="bar.height + '%'"
+                  [title]="bar.visits + ' visite' + (bar.visits > 1 ? 's' : '')">
+                  <div class="chart-tooltip">
+                    {{ bar.visits }} visite{{ bar.visits > 1 ? 's' : '' }}
+                  </div>
                 </div>
               </div>
               <div class="chart-label">{{ bar.day }}</div>

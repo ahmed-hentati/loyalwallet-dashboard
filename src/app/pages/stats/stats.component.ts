@@ -41,7 +41,8 @@ export class StatsComponent implements OnInit {
     return days.map((d: any) => ({
       day: new Date(d.day).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }),
       visits: parseInt(d.visits),
-      height: max > 0 ? Math.round((parseInt(d.visits) / max) * 100) : 0,
+      // Minimum 8% pour que les barres soient toujours visibles
+      height: max > 0 ? Math.max(8, Math.round((parseInt(d.visits) / max) * 100)) : 8,
     }));
   }
 
