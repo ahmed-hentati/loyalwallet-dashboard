@@ -21,6 +21,7 @@ export class NavbarComponent {
     { path: '/campaigns',   icon: '📣', label: 'Campagnes'    },
     { path: '/automations', icon: '⚡', label: 'Automations'  },
     { path: '/print-qr',   icon: '🖨️', label: 'Imprimer QR'  },
+    { path: '/settings',   icon: '⚙️', label: 'Paramètres'   },
   ];
 
   get publicPageUrl(): string {

@@ -16,6 +16,14 @@ export class AuthService {
   );
   readonly isLoggedIn = computed(() => !!this.restaurant());
 
+  updateRestaurant(data: Partial<Restaurant>) {
+    const current = this.restaurant();
+    if (!current) return;
+    const updated = { ...current, ...data };
+    this.restaurant.set(updated);
+    localStorage.setItem('restaurant', JSON.stringify(updated));
+  }
+
   get token() { return localStorage.getItem('token'); }
 
   login(email: string, password: string) {

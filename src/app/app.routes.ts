@@ -35,6 +35,7 @@ export const routes: Routes = [
       { path: 'campaigns',   loadComponent: () => import('./pages/campaigns/campaigns.component').then(m => m.CampaignsComponent) },
       { path: 'automations', loadComponent: () => import('./pages/automations/automations.component').then(m => m.AutomationsComponent) },
       { path: 'print-qr',   loadComponent: () => import('./pages/print-qr/print-qr.component').then(m => m.PrintQrComponent) },
+      { path: 'settings',   loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent) },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },
