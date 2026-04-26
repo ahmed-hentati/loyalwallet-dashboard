@@ -1,0 +1,253 @@
+.subtitle { color: var(--text-secondary); margin-top: 4px; }
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.period-badge {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+// ── KPI Grid ───────────────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+
+  &.highlight {
+    background: var(--primary);
+    border-color: var(--primary);
+
+    .kpi-value { color: #fff; }
+    .kpi-label { color: rgba(255,255,255,0.8); }
+    .kpi-desc  { color: rgba(255,255,255,0.6); }
+    .kpi-icon  { filter: brightness(2); }
+  }
+}
+
+.kpi-icon  { font-size: 28px; margin-bottom: 10px; }
+.kpi-value { font-size: 36px; font-weight: 800; color: var(--text); font-family: var(--font-title); line-height: 1; margin-bottom: 6px; }
+.kpi-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.kpi-desc  { font-size: 12px; color: var(--text-secondary); }
+
+// ── Metrics row ────────────────────────────────────────────
+.metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metric-title { font-size: 14px; font-weight: 600; }
+
+.metric-trend {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+
+  &.trend-up    { background: #F0FDF4; color: var(--success); }
+  &.trend-down  { background: #FEF2F2; color: var(--danger); }
+  &.trend-neutral { background: var(--bg); color: var(--text-secondary); }
+}
+
+.metric-value { font-size: 40px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 4px; }
+.metric-sub   { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+
+.metric-bar-outer {
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.metric-bar-inner {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+// ── Chart ──────────────────────────────────────────────────
+.chart-card h3 { margin-bottom: 20px; font-size: 15px; font-weight: 600; }
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.chart-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 28px;
+}
+
+.chart-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  height: 90px;
+  position: relative;
+}
+
+.chart-bar {
+  width: 100%;
+  background: var(--primary);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.5s ease;
+  position: relative;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
+    .chart-tooltip { display: block; }
+  }
+}
+
+.chart-tooltip {
+  display: none;
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.chart-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  transform: rotate(-45deg);
+  margin-top: 4px;
+}
+
+// ── Top clients ────────────────────────────────────────────
+.top-clients { display: flex; flex-direction: column; gap: 12px; }
+
+.top-client {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+.rank {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  background: var(--border);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+
+  &.gold   { background: #FEF3C7; color: #92400E; }
+  &.silver { background: #F3F4F6; color: #374151; }
+  &.bronze { background: #FEF9C3; color: #713F12; }
+}
+
+.client-avatar {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.client-info { flex: 1; min-width: 0; }
+.client-name { font-size: 14px; font-weight: 600; }
+.client-card { font-size: 12px; color: var(--text-secondary); }
+
+.client-stats { width: 120px; flex-shrink: 0; }
+.client-visits { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+
+.client-progress-bar {
+  height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.client-progress-fill {
+  height: 100%; background: var(--primary); border-radius: 2px;
+  transition: width 0.5s;
+}
+
+.client-rewards { font-size: 13px; color: var(--primary); font-weight: 500; flex-shrink: 0; }
+
+// ── Motivation ─────────────────────────────────────────────
+.motivation-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: linear-gradient(135deg, #FFF7F0, #FFF0E8);
+  border: 1px solid #FDDCCC;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.motivation-icon { font-size: 28px; flex-shrink: 0; }
+.motivation-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.motivation-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }

@@ -13,7 +13,8 @@ export class NavbarComponent {
   auth = inject(AuthService);
 
   links = [
-    { path: '/dashboard', icon: '📊', label: 'Dashboard'  },
+    { path: '/dashboard',   icon: '📊', label: 'Dashboard'   },
+    { path: '/stats',       icon: '📈', label: 'Statistiques' },
     { path: '/scanner',   icon: '📷', label: 'Scanner'    },
     { path: '/cards',     icon: '🎴', label: 'Mes cartes' },
     { path: '/clients',   icon: '👥', label: 'Clients'    },

@@ -1,0 +1,156 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>📊 Statistiques</h1>
+      <p class="subtitle">Mesurez l'impact de votre programme de fidélité</p>
+    </div>
+    <div class="period-badge">30 derniers jours</div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state"><div class="spinner"></div></div>
+  }
+
+  @if (data(); as d) {
+
+    <!-- KPIs principaux -->
+    <div class="kpi-grid">
+
+      <div class="kpi-card highlight">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-value">{{ d.overview.retention_rate }}%</div>
+        <div class="kpi-label">Taux de rétention</div>
+        <div class="kpi-desc">Clients actifs ce mois / total</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">↩️</div>
+        <div class="kpi-value">{{ d.overview.return_rate }}%</div>
+        <div class="kpi-label">Taux de retour</div>
+        <div class="kpi-desc">Clients avec + d'1 visite</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">📅</div>
+        <div class="kpi-value">{{ d.overview.avg_visits }}</div>
+        <div class="kpi-label">Visites / client</div>
+        <div class="kpi-desc">Fréquence moyenne</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">🎁</div>
+        <div class="kpi-value">{{ d.overview.rewards_this_month }}</div>
+        <div class="kpi-label">Récompenses accordées</div>
+        <div class="kpi-desc">Ce mois-ci</div>
+      </div>
+
+    </div>
+
+    <!-- Évolution -->
+    <div class="metrics-row">
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div class="metric-title">Clients actifs</div>
+          <div class="metric-trend" [class]="trendClass(d.overview.active_growth)">
+            {{ trend(d.overview.active_growth) }} vs mois dernier
+          </div>
+        </div>
+        <div class="metric-value">{{ d.overview.active_30d }}</div>
+        <div class="metric-sub">sur {{ d.overview.total_clients }} clients au total</div>
+        <div class="metric-bar-outer">
+          <div class="metric-bar-inner"
+            [style.width.%]="d.overview.total_clients > 0 ? (d.overview.active_30d / d.overview.total_clients * 100) : 0">
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div class="metric-title">Nouveaux clients</div>
+          <div class="metric-trend" [class]="trendClass(d.overview.new_growth)">
+            {{ trend(d.overview.new_growth) }} vs mois dernier
+          </div>
+        </div>
+        <div class="metric-value">{{ d.overview.new_this_month }}</div>
+        <div class="metric-sub">inscrits ce mois-ci</div>
+        <div class="metric-bar-outer">
+          <div class="metric-bar-inner" style="background: var(--success)"
+            [style.width.%]="d.overview.total_clients > 0 ? (d.overview.new_this_month / d.overview.total_clients * 100) : 0">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Graphe des visites -->
+    @if (chartBars().length > 0) {
+      <div class="card chart-card">
+        <h3>Visites par jour — 30 derniers jours</h3>
+        <div class="chart">
+          @for (bar of chartBars(); track bar.day) {
+            <div class="chart-col">
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" [style.height.%]="bar.height" [title]="bar.visits + ' visites'">
+                  <div class="chart-tooltip">{{ bar.visits }}</div>
+                </div>
+              </div>
+              <div class="chart-label">{{ bar.day }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Top clients -->
+    @if (d.top_clients.length > 0) {
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">🏆 Vos clients les plus fidèles</h3>
+        <div class="top-clients">
+          @for (c of d.top_clients; track c.serial_number; let i = $index) {
+            <div class="top-client">
+              <div class="rank" [class.gold]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2">
+                {{ i + 1 }}
+              </div>
+              <div class="client-avatar">{{ (c.name || 'C')[0].toUpperCase() }}</div>
+              <div class="client-info">
+                <div class="client-name">{{ c.name || 'Client anonyme' }}</div>
+                <div class="client-card">{{ c.card_name }}</div>
+              </div>
+              <div class="client-stats">
+                <div class="client-visits">{{ c.total_visits }} visites</div>
+                <div class="client-progress-bar">
+                  <div class="client-progress-fill" [style.width.%]="progressPercent(c)"></div>
+                </div>
+              </div>
+              @if (c.total_rewards > 0) {
+                <div class="client-rewards">🎁 × {{ c.total_rewards }}</div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Message motivation -->
+    <div class="motivation-card">
+      <div class="motivation-icon">💡</div>
+      <div>
+        <div class="motivation-title">Votre programme de fidélité en chiffres</div>
+        <div class="motivation-text">
+          @if (d.overview.return_rate >= 50) {
+            <strong>Excellent !</strong> {{ d.overview.return_rate }}% de vos clients sont revenus.
+            Avec {{ d.overview.avg_visits }} visites en moyenne, votre carte fidélité fonctionne parfaitement.
+          } @else if (d.overview.return_rate >= 30) {
+            <strong>Bon début !</strong> {{ d.overview.return_rate }}% de retour.
+            Activez les automations SMS pour booster ce chiffre.
+          } @else {
+            Activez les <strong>automations SMS</strong> pour rappeler vos clients inactifs
+            et augmenter votre taux de retour.
+          }
+        </div>
+      </div>
+    </div>
+
+  }
+</div>
