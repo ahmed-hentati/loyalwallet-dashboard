@@ -1,0 +1,230 @@
+<div class="page no-print">
+  <div class="page-header">
+    <div>
+      <h1>🖨️ Supports imprimables</h1>
+      <p class="subtitle">Générez vos supports à afficher en caisse</p>
+    </div>
+    <button class="btn btn-primary" (click)="print()">
+      🖨️ Imprimer
+    </button>
+  </div>
+
+  <!-- Sélection carte -->
+  @if (!loading() && cards().length > 0) {
+    <div class="controls-bar">
+      <div class="control-group">
+        <label>Carte</label>
+        <div class="card-tabs">
+          @for (card of cards(); track card.id) {
+            <button class="card-tab" [class.active]="selected()?.id === card.id"
+              (click)="selectCard(card)">
+              {{ card.card_name }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Format</label>
+        <div class="format-tabs">
+          <button class="format-tab" [class.active]="format() === 'table'" (click)="format.set('table')">
+            🪧 Présentoir de table
+          </button>
+          <button class="format-tab" [class.active]="format() === 'a5'" (click)="format.set('a5')">
+            📄 A5 (flyer)
+          </button>
+          <button class="format-tab" [class.active]="format() === 'a4'" (click)="format.set('a4')">
+            📋 A4 (affiche)
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <p class="print-hint">💡 Cliquez "Imprimer" puis sélectionnez votre imprimante ou "Enregistrer en PDF"</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- ZONE IMPRIMABLE — visible à l'impression seulement    -->
+<!-- ══════════════════════════════════════════════════════ -->
+
+@if (selected(); as card) {
+
+  <!-- FORMAT TABLE — Présentoir de table (tent card) -->
+  @if (format() === 'table') {
+    <div class="print-page tent-card">
+
+      <!-- Face recto (haut) — vue client de face -->
+      <div class="tent-face recto">
+        <div class="tent-top-band"></div>
+        <div class="tent-content">
+          <div class="tent-restaurant">{{ restaurantName() }}</div>
+          <h2 class="tent-headline">Votre carte fidélité<br/>dans votre téléphone</h2>
+          <div class="tent-steps">
+            <div class="tent-step">
+              <div class="step-num">1</div>
+              <div>Scannez le QR code</div>
+            </div>
+            <div class="tent-step">
+              <div class="step-num">2</div>
+              <div>Ajoutez à votre Wallet</div>
+            </div>
+            <div class="tent-step">
+              <div class="step-num">3</div>
+              <div>Cumulez vos {{ card.loyalty_type === 'stamp' ? 'tampons' : 'points' }} !</div>
+            </div>
+          </div>
+          <div class="tent-qr-wrap">
+            <img [src]="getQrUrl()" alt="QR Code" class="tent-qr" />
+            <div class="tent-scan-label">Scannez-moi</div>
+          </div>
+          <div class="tent-reward">
+            🎁 Récompense : <strong>{{ card.reward_description }}</strong>
+          </div>
+          <div class="tent-no-app">📱 Aucune application à télécharger</div>
+        </div>
+        <div class="tent-bottom-band">
+          <span>Propulsé par LoyalWallet</span>
+        </div>
+      </div>
+
+      <!-- Ligne de pliage -->
+      <div class="fold-line">
+        <span class="fold-text">— Plier ici —</span>
+      </div>
+
+      <!-- Face verso (bas) — vue caissier -->
+      <div class="tent-face verso">
+        <div class="verso-content">
+          <div class="verso-icon">📷</div>
+          <div class="verso-title">Comment créditer un tampon</div>
+          <div class="verso-steps">
+            <div class="verso-step">
+              <span class="v-num">1</span>
+              Ouvrez le <strong>Scanner</strong> dans le dashboard
+            </div>
+            <div class="verso-step">
+              <span class="v-num">2</span>
+              Scannez le QR code du client dans son Wallet
+            </div>
+            <div class="verso-step">
+              <span class="v-num">3</span>
+              Le tampon est crédité automatiquement ✓
+            </div>
+          </div>
+          <div class="verso-url">app.loyalwallet.hentati.me</div>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- FORMAT A5 — Flyer -->
+  @if (format() === 'a5') {
+    <div class="print-page a5-flyer">
+      <div class="a5-left">
+        <div class="a5-logo-row">
+          <div class="a5-logo-dot"></div>
+          <span class="a5-restaurant">{{ restaurantName() }}</span>
+        </div>
+        <h2 class="a5-headline">
+          Gagnez des<br/>
+          <span class="a5-accent">récompenses</span><br/>
+          à chaque visite
+        </h2>
+        <div class="a5-reward-box">
+          <div class="a5-reward-label">Votre récompense</div>
+          <div class="a5-reward-value">{{ card.reward_description }}</div>
+          <div class="a5-reward-sub">
+            après {{ card.loyalty_type === 'stamp' ? card.stamp_total + ' tampons' : card.points_for_reward + ' points' }}
+          </div>
+        </div>
+        <div class="a5-steps">
+          <div class="a5-step">📱 Scannez le QR code</div>
+          <div class="a5-step">💳 Carte ajoutée à votre Wallet</div>
+          <div class="a5-step">🎁 Réclamez votre récompense</div>
+        </div>
+        <div class="a5-noapp">Aucune application à télécharger</div>
+      </div>
+      <div class="a5-right">
+        <div class="a5-qr-container">
+          <img [src]="getQrUrl()" alt="QR Code" class="a5-qr" />
+          <div class="a5-scan-label">Scannez pour<br/>votre carte</div>
+          <div class="a5-phone-icons">🍎 Apple Wallet &nbsp; G Google Wallet</div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- FORMAT A4 — Affiche -->
+  @if (format() === 'a4') {
+    <div class="print-page a4-poster">
+      <div class="a4-header">
+        <div class="a4-restaurant">{{ restaurantName() }}</div>
+        <div class="a4-tagline">Programme de fidélité numérique</div>
+      </div>
+
+      <div class="a4-hero">
+        <h1 class="a4-headline">
+          Votre carte fidélité<br/>
+          <span class="a4-accent">toujours dans votre poche</span>
+        </h1>
+        <p class="a4-sub">
+          Scannez le QR code ci-dessous et recevez votre carte directement dans<br/>
+          Apple Wallet ou Google Wallet. Aucune application à télécharger.
+        </p>
+      </div>
+
+      <div class="a4-main">
+        <div class="a4-qr-section">
+          <div class="a4-qr-frame">
+            <img [src]="getQrUrl()" alt="QR Code" class="a4-qr" />
+          </div>
+          <div class="a4-scan-cta">Scannez-moi !</div>
+        </div>
+
+        <div class="a4-info">
+          <div class="a4-reward-card">
+            <div class="a4-rc-label">Votre récompense</div>
+            <div class="a4-rc-value">{{ card.reward_description }}</div>
+            <div class="a4-rc-sub">
+              après {{ card.loyalty_type === 'stamp'
+                ? card.stamp_total + ' tampons'
+                : card.points_for_reward + ' points' }}
+            </div>
+          </div>
+
+          <div class="a4-how">
+            <div class="a4-how-title">Comment ça marche ?</div>
+            <div class="a4-how-step">
+              <div class="a4-how-num">1</div>
+              <div>Scannez le QR code avec votre téléphone</div>
+            </div>
+            <div class="a4-how-step">
+              <div class="a4-how-num">2</div>
+              <div>Ajoutez la carte à votre Apple ou Google Wallet</div>
+            </div>
+            <div class="a4-how-step">
+              <div class="a4-how-num">3</div>
+              <div>Présentez votre carte à chaque visite</div>
+            </div>
+            <div class="a4-how-step">
+              <div class="a4-how-num">4</div>
+              <div>Atteignez l'objectif et réclamez votre récompense !</div>
+            </div>
+          </div>
+
+          <div class="a4-wallets">
+            <div class="a4-wallet apple">🍎 Apple Wallet</div>
+            <div class="a4-wallet google">G Google Wallet</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="a4-footer">
+        <div class="a4-footer-left">Propulsé par LoyalWallet</div>
+        <div class="a4-footer-right">loyalwallet.hentati.me</div>
+      </div>
+    </div>
+  }
+
+}

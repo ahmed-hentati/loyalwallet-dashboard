@@ -20,5 +20,6 @@ export class NavbarComponent {
     { path: '/clients',   icon: '👥', label: 'Clients'    },
     { path: '/campaigns',   icon: '📣', label: 'Campagnes'    },
     { path: '/automations', icon: '⚡', label: 'Automations'  },
+    { path: '/print-qr',   icon: '🖨️', label: 'Imprimer QR'  },
   ];
 }
