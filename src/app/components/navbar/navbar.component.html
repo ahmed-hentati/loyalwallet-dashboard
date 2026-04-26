@@ -8,7 +8,11 @@
 
       @if (auth.restaurant(); as r) {
         <div class="restaurant-info">
-          <div class="avatar">{{ r.name[0] }}</div>
+          @if (r.logo_url) {
+            <img [src]="r.logo_url" alt="Logo" class="avatar avatar-img" />
+          } @else {
+            <div class="avatar">{{ r.name[0] }}</div>
+          }
           <div>
             <div class="r-name">{{ r.name }}</div>
             <span class="badge"
@@ -32,6 +36,11 @@
       </ul>
     </div>
 
+    @if (publicPageUrl) {
+      <a [href]="publicPageUrl" target="_blank" class="public-page-link">
+        🌐 Ma page publique
+      </a>
+    }
     <button class="logout-btn" (click)="auth.logout()">
       ↩ Déconnexion
     </button>

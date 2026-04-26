@@ -1,0 +1,135 @@
+@if (loading()) {
+  <div class="rp-loading">
+    <div class="rp-spinner"></div>
+  </div>
+}
+
+@if (error()) {
+  <div class="rp-error">
+    <div class="rp-error-icon">😕</div>
+    <h2>Restaurant introuvable</h2>
+    <p>Ce lien n'existe pas ou n'est plus disponible.</p>
+  </div>
+}
+
+@if (data(); as d) {
+  <div class="rp-page">
+
+    <!-- Header restaurant -->
+    <div class="rp-header">
+      <div class="rp-header-inner">
+        <div class="rp-brand">
+          @if (d.logo_url) {
+            <img [src]="d.logo_url" alt="Logo" class="rp-logo" />
+          } @else {
+            <div class="rp-logo-avatar">{{ d.name[0] }}</div>
+          }
+          <div>
+            <h1 class="rp-name">{{ d.name }}</h1>
+            <div class="rp-tagline">Programme de fidélité numérique</div>
+          </div>
+        </div>
+        <button class="rp-share-btn" (click)="copyLink()">
+          🔗 Partager
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="rp-hero">
+      <div class="rp-hero-inner">
+        <h2 class="rp-hero-title">
+          Fidélisez-vous,<br/>
+          <span class="rp-hero-accent">gagnez des récompenses</span>
+        </h2>
+        <p class="rp-hero-sub">
+          Scannez le QR code de votre carte, présentez votre téléphone à chaque visite.<br/>
+          Aucune application à télécharger.
+        </p>
+        <div class="rp-wallets">
+          <div class="rp-wallet">🍎 Apple Wallet</div>
+          <div class="rp-wallet">G Google Wallet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cartes disponibles -->
+    <div class="rp-cards-section">
+      <div class="rp-section-inner">
+        <h3 class="rp-section-title">
+          {{ d.cards?.length > 1 ? 'Nos cartes de fidélité' : 'Notre carte de fidélité' }}
+        </h3>
+
+        @if (!d.cards || d.cards.length === 0) {
+          <div class="rp-empty">Aucune carte disponible pour le moment.</div>
+        }
+
+        <div class="rp-cards-grid">
+          @for (card of d.cards; track card.id) {
+            <div class="rp-card-item">
+
+              <!-- Aperçu carte Wallet -->
+              <div class="rp-wallet-card" [style.background]="cardBackground(card)">
+                <div class="rwc-top">
+                  @if (card.logo_url) {
+                    <img [src]="card.logo_url" alt="Logo" class="rwc-logo-img" />
+                  } @else {
+                    <span class="rwc-emoji">{{ card.logo_emoji ?? '🎯' }}</span>
+                  }
+                  <span class="rwc-name" [style.color]="card.foreground_color">{{ card.card_name }}</span>
+                </div>
+                <div class="rwc-reward" [style.color]="card.label_color">
+                  🎁 {{ card.reward_description }}
+                </div>
+                <div class="rwc-target" [style.color]="card.foreground_color">
+                  @if (card.loyalty_type === 'stamp') {
+                    {{ card.stamp_total }} tampons pour votre récompense
+                  } @else {
+                    {{ card.points_for_reward }} points pour votre récompense
+                  }
+                </div>
+              </div>
+
+              <!-- QR Code -->
+              <div class="rp-qr-section">
+                <img [src]="getQrUrl(card)" alt="QR Code" class="rp-qr" />
+                <div class="rp-qr-label">Scannez pour obtenir votre carte</div>
+              </div>
+
+              <!-- CTA -->
+              <a [href]="getRegisterUrl(card)" class="rp-cta-btn">
+                ✨ Obtenir ma carte gratuite
+              </a>
+
+              <!-- Étapes -->
+              <div class="rp-steps">
+                <div class="rp-step">
+                  <div class="rp-step-num">1</div>
+                  <div class="rp-step-text">Scannez le QR code</div>
+                </div>
+                <div class="rp-step-arrow">→</div>
+                <div class="rp-step">
+                  <div class="rp-step-num">2</div>
+                  <div class="rp-step-text">Ajoutez à votre Wallet</div>
+                </div>
+                <div class="rp-step-arrow">→</div>
+                <div class="rp-step">
+                  <div class="rp-step-num">3</div>
+                  <div class="rp-step-text">Cumulez et gagnez !</div>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="rp-footer">
+      <div>Propulsé par <strong>LoyalWallet</strong></div>
+      <a href="https://loyalwallet.hentati.me" target="_blank">Créer votre programme de fidélité →</a>
+    </div>
+
+  </div>
+}

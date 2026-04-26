@@ -22,4 +22,9 @@ export class NavbarComponent {
     { path: '/automations', icon: '⚡', label: 'Automations'  },
     { path: '/print-qr',   icon: '🖨️', label: 'Imprimer QR'  },
   ];
+
+  get publicPageUrl(): string {
+    const slug = this.auth.restaurant()?.slug;
+    return slug ? `/restaurant/${slug}` : '';
+  }
 }

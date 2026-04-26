@@ -16,6 +16,10 @@ export const routes: Routes = [
     path: 'card/:serialNumber',
     loadComponent: () => import('./pages/card-page/card-page.component').then(m => m.CardPageComponent),
   },
+  {
+    path: 'restaurant/:slug',
+    loadComponent: () => import('./pages/restaurant-public/restaurant-public.component').then(m => m.RestaurantPublicComponent),
+  },
   // ── Pages protégées ──
   {
     path: '',

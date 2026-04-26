@@ -1,0 +1,293 @@
+$orange: #FF5C2A;
+$black: #0E0E0E;
+
+.rp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.rp-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid #eee;
+  border-top-color: $orange;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.rp-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #666;
+  text-align: center;
+  padding: 24px;
+}
+.rp-error-icon { font-size: 48px; }
+.rp-error h2   { font-size: 22px; font-weight: 700; color: #333; }
+
+.rp-page {
+  min-height: 100vh;
+  background: #F8F7F4;
+  font-family: 'DM Sans', sans-serif;
+}
+
+// ── Header ─────────────────────────────────────────────────
+.rp-header {
+  background: white;
+  border-bottom: 1px solid #E8E7E3;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+}
+
+.rp-header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rp-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rp-logo {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.rp-logo-avatar {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: $orange;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.rp-name { font-size: 18px; font-weight: 700; color: $black; }
+.rp-tagline { font-size: 12px; color: #999; }
+
+.rp-share-btn {
+  padding: 8px 16px;
+  border: 1px solid #E8E7E3;
+  border-radius: 20px;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  color: #555;
+  transition: all 0.15s;
+  white-space: nowrap;
+
+  &:hover { border-color: $orange; color: $orange; }
+}
+
+// ── Hero ───────────────────────────────────────────────────
+.rp-hero {
+  background: $black;
+  padding: 40px 20px;
+}
+
+.rp-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.rp-hero-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+
+.rp-hero-accent { color: $orange; }
+
+.rp-hero-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.rp-wallets {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.rp-wallet {
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+}
+
+// ── Cards section ──────────────────────────────────────────
+.rp-cards-section {
+  padding: 32px 20px;
+}
+
+.rp-section-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.rp-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: $black;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.rp-empty {
+  text-align: center;
+  color: #999;
+  padding: 40px;
+}
+
+.rp-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.rp-card-item {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ── Wallet card preview ────────────────────────────────────
+.rp-wallet-card {
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 130px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.rwc-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rwc-emoji    { font-size: 24px; }
+.rwc-logo-img { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; }
+.rwc-name     { font-size: 18px; font-weight: 700; }
+.rwc-reward   { font-size: 13px; opacity: 0.75; }
+.rwc-target   { font-size: 13px; font-weight: 600; opacity: 0.9; margin-top: auto; }
+
+// ── QR ─────────────────────────────────────────────────────
+.rp-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #F8F7F4;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.rp-qr {
+  width: 180px; height: 180px;
+  border-radius: 8px;
+}
+
+.rp-qr-label {
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+}
+
+// ── CTA ────────────────────────────────────────────────────
+.rp-cta-btn {
+  display: block;
+  text-align: center;
+  background: $orange;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(255,92,42,0.3);
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,92,42,0.4); }
+  &:active { transform: translateY(0); }
+}
+
+// ── Steps ──────────────────────────────────────────────────
+.rp-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rp-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.rp-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: $black;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.rp-step-text { font-size: 12px; color: #666; max-width: 80px; line-height: 1.3; }
+.rp-step-arrow { color: #ccc; font-size: 16px; }
+
+// ── Footer ─────────────────────────────────────────────────
+.rp-footer {
+  background: $black;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+
+  a { color: $orange; text-decoration: none; font-size: 13px; }
+  strong { color: rgba(255,255,255,0.7); }
+}

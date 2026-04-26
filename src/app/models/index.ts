@@ -4,6 +4,8 @@ export interface Restaurant {
   email: string;
   phone?: string;
   plan: 'free' | 'pro';
+  slug?: string;
+  logo_url?: string;
   created_at: string;
 }
 
