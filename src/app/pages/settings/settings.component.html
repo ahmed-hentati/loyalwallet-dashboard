@@ -2,143 +2,208 @@
   <div class="page-header">
     <div>
       <h1>⚙️ Paramètres</h1>
-      <p class="subtitle">Gérez votre profil et votre page publique</p>
+      <p class="subtitle">Gérez votre profil, votre abonnement et vos intégrations</p>
     </div>
-    @if (saved()) {
-      <div class="saved-badge">✅ Modifications enregistrées</div>
-    }
   </div>
 
   @if (loading()) {
     <div class="loading-state"><div class="spinner"></div></div>
   } @else {
 
-  <div class="settings-layout">
+  <div class="settings-grid">
 
-    <!-- Colonne principale -->
-    <div class="settings-main">
+    <!-- ══ 01 Profil Établissement (grande colonne) ══════ -->
+    <div class="s-card s-card-main">
+      <div class="s-card-num">01</div>
+      <div class="s-card-label">🏢 PROFIL ÉTABLISSEMENT</div>
+      <h2 class="s-card-title">Informations publiques</h2>
 
-      <!-- Logo -->
-      <div class="settings-card">
-        <div class="settings-card-title">Logo du restaurant</div>
-        <div class="logo-section">
-          <div class="logo-current">
-            @if (logoPreview()) {
-              <img [src]="logoPreview()" alt="Logo" class="logo-img" />
+      <div class="info-form">
+        <div class="logo-name-row">
+          <label class="logo-upload-zone" [class.uploading]="uploadingLogo()">
+            <input type="file" accept="image/*" (change)="onLogoSelected($event)" class="hidden-file" />
+            @if (uploadingLogo()) {
+              <div class="spinner-sm"></div>
+            } @else if (logoPreview()) {
+              <img [src]="logoPreview()" alt="Logo" class="logo-thumb" />
             } @else {
-              <div class="logo-placeholder">
-                {{ auth.restaurant()?.name?.[0] ?? '?' }}
-              </div>
+              <span class="logo-plus">↑</span>
             }
-            <div class="logo-actions">
-              <label class="btn btn-secondary logo-upload-btn">
-                @if (uploadingLogo()) { ⏳ Upload... }
-                @else { 📸 Changer le logo }
-                <input type="file" accept="image/*" (change)="onLogoSelected($event)" class="hidden-input" />
-              </label>
-              @if (logoPreview()) {
-                <button class="btn-remove" (click)="removeLogo()">Supprimer</button>
-              }
-            </div>
-          </div>
-          <div class="logo-hint">
-            PNG ou JPG recommandé — carré (ex: 200×200px) — max 5MB<br/>
-            Affiché dans la navbar et sur votre page publique.
+          </label>
+          <div class="name-field">
+            <label class="field-label">NOM DE L'ÉTABLISSEMENT</label>
+            <input type="text" class="s-input" [value]="name()" (input)="name.set($any($event.target).value)" placeholder="Mon Restaurant" />
           </div>
         </div>
-      </div>
 
-      <!-- Informations -->
-      <div class="settings-card">
-        <div class="settings-card-title">Informations</div>
-
-        <div class="form-group">
-          <label>Nom du restaurant</label>
-          <input type="text"
-            [value]="name()"
-            (input)="name.set($any($event.target).value)"
-            placeholder="Ex: Chez Marco" />
-          <div class="field-hint">Modifier le nom met à jour automatiquement votre URL publique.</div>
+        <div class="field-group">
+          <label class="field-label">TÉLÉPHONE</label>
+          <div class="s-input-icon">
+            <span>📞</span>
+            <input type="tel" [value]="phone()" (input)="phone.set($any($event.target).value)" placeholder="+33 6 00 00 00 00" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" [value]="auth.restaurant()?.email ?? ''" disabled class="input-disabled" />
+        <div class="field-group">
+          <label class="field-label">ADRESSE</label>
+          <div class="s-input-icon">
+            <span>📍</span>
+            <input type="text" [value]="address()" (input)="address.set($any($event.target).value)" placeholder="12 rue de la Paix" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Téléphone</label>
-          <input type="tel"
-            [value]="phone()"
-            (input)="phone.set($any($event.target).value)"
-            placeholder="+33 6 12 34 56 78" />
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">VILLE</label>
+            <input type="text" class="s-input" [value]="city()" (input)="city.set($any($event.target).value)" placeholder="Paris" />
+          </div>
+          <div class="field-group field-group-sm">
+            <label class="field-label">CODE POSTAL</label>
+            <input type="text" class="s-input" [value]="postalCode()" (input)="postalCode.set($any($event.target).value)" placeholder="75001" />
+          </div>
         </div>
 
-        <div class="form-actions">
-          <button class="btn btn-primary" (click)="save()" [disabled]="saving()">
-            {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}
+        <div class="field-group">
+          <label class="field-label">SITE WEB</label>
+          <div class="s-input-icon">
+            <span>🌐</span>
+            <input type="url" [value]="website()" (input)="website.set($any($event.target).value)" placeholder="https://monsite.fr" />
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-footer-info">
+            @if (auth.restaurant()?.email) {
+              <span class="footer-meta">✉️ {{ auth.restaurant()?.email }}</span>
+            }
+            @if (publicPageUrl()) {
+              <span class="footer-meta">🔗 {{ publicPageUrl() }}</span>
+            }
+          </div>
+          <button class="btn btn-primary" (click)="saveInfo()" [disabled]="savingInfo()">
+            @if (savedInfo()) { ✅ Enregistré } @else { 💾 Enregistrer }
           </button>
         </div>
       </div>
-
     </div>
 
-    <!-- Colonne droite -->
-    <div class="settings-side">
+    <!-- ══ 02 Plan & Abonnement (petite colonne) ════════ -->
+    <div class="s-card s-card-side">
+      <div class="s-card-num">02</div>
+      <div class="s-card-label">👑 PLAN & ABONNEMENT</div>
+      <div class="plan-name">
+        {{ auth.restaurant()?.plan === 'pro' ? '⭐ Plan Pro' : '🆓 Plan Gratuit' }}
+      </div>
 
-      <!-- Plan -->
-      <div class="settings-card plan-card">
-        <div class="settings-card-title">Plan actuel</div>
-        <div class="plan-badge" [class.plan-pro]="auth.restaurant()?.plan === 'pro'">
-          {{ auth.restaurant()?.plan === 'pro' ? '⭐ Plan Pro' : '🆓 Plan Gratuit' }}
+      @if (auth.restaurant()?.plan === 'free') {
+        <div class="plan-limits">
+          <div class="plan-limit-item"><span>Clients</span><span>50 max</span></div>
+          <div class="plan-limit-item"><span>Cartes</span><span>1 max</span></div>
+          <div class="plan-limit-item"><span>SMS campagnes</span><span class="text-danger">✕</span></div>
         </div>
-        @if (auth.restaurant()?.plan === 'free') {
-          <div class="plan-limits">
-            <div class="plan-limit-item">
-              <span>Clients</span>
-              <span>50 max</span>
-            </div>
-            <div class="plan-limit-item">
-              <span>Cartes</span>
-              <span>1 max</span>
-            </div>
-            <div class="plan-limit-item">
-              <span>SMS campagnes</span>
-              <span>❌</span>
-            </div>
-          </div>
-          <button class="btn btn-primary upgrade-btn">
-            Passer au Pro — 39€/mois →
+        <button class="btn btn-primary upgrade-btn">Passer au Pro — 39€/mois →</button>
+      } @else {
+        <p class="plan-pro-active">✅ Toutes les fonctionnalités sont actives</p>
+      }
+
+      @if (publicPageUrl()) {
+        <div class="plan-divider"></div>
+        <div class="settings-card-title">VOTRE PAGE PUBLIQUE</div>
+        <p class="public-desc">Partagez ce lien sur Instagram, WhatsApp ou imprimez-le.</p>
+        <div class="public-url-box">
+          <span class="public-url">{{ publicPageUrl() }}</span>
+        </div>
+        <div class="public-actions">
+          <button class="btn btn-secondary" (click)="copyPublicUrl()">
+            {{ copied() ? '✅ Copié !' : '🔗 Copier' }}
           </button>
-        } @else {
-          <p class="plan-pro-msg">Toutes les fonctionnalités sont actives ✅</p>
-        }
+          <a [href]="publicPageUrl()" target="_blank" class="btn btn-primary">🌐 Voir</a>
+        </div>
+      }
+    </div>
+
+    <!-- ══ 03 Avis Google ════════════════════════════════ -->
+    <div class="s-card s-card-google">
+      <div class="s-card-num">03</div>
+      <div class="s-card-label">⭐ AVIS GOOGLE</div>
+      <h2 class="s-card-title">Sollicitation automatique</h2>
+      <p class="s-card-desc">
+        Transformez vos clients fidèles en ambassadeurs : demandez un avis après le N<sup>ème</sup> tampon.
+      </p>
+
+      <div class="field-group">
+        <label class="field-label">LIEN GOOGLE AVIS</label>
+        <div class="s-input-icon">
+          <span>🔗</span>
+          <input type="url" [value]="googleReviewUrl()" (input)="googleReviewUrl.set($any($event.target).value)"
+            placeholder="https://g.page/votre-commerce/review" />
+        </div>
       </div>
 
-      <!-- Page publique -->
-      <div class="settings-card">
-        <div class="settings-card-title">Votre page publique</div>
-        <p class="public-desc">
-          Partagez ce lien sur Instagram, WhatsApp ou imprimez-le pour que vos clients s'inscrivent facilement.
-        </p>
-        @if (publicPageUrl()) {
-          <div class="public-url-box">
-            <span class="public-url">{{ publicPageUrl() }}</span>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-title">Sollicitation auto</div>
+          <div class="toggle-sub">Afficher après le N<sup>ème</sup> tampon</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [checked]="googleReviewEnabled()" (change)="googleReviewEnabled.set($any($event.target).checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      @if (googleReviewEnabled()) {
+        <div class="field-group">
+          <label class="field-label">APRÈS COMBIEN DE VISITES</label>
+          <div class="visit-options">
+            @for (v of visitOptions; track v) {
+              <button class="visit-btn" [class.active]="googleReviewAfterVisits() === v"
+                (click)="googleReviewAfterVisits.set(v)">{{ v }}</button>
+            }
           </div>
-          <div class="public-actions">
-            <button class="btn btn-secondary" (click)="copyPublicUrl()">
-              {{ copied() ? '✅ Copié !' : '🔗 Copier le lien' }}
+        </div>
+      }
+
+      <button class="btn btn-google" (click)="saveReview()" [disabled]="savingReview()">
+        @if (savedReview()) { ✅ Enregistré } @else { 💾 Enregistrer }
+      </button>
+    </div>
+
+    <!-- ══ 04 Zone de danger ═════════════════════════════ -->
+    <div class="s-card s-card-danger">
+      <div class="s-card-num danger-num">04</div>
+      <div class="s-card-label danger-label">⛔ ZONE DE DANGER</div>
+      <h2 class="s-card-title">Suppression du compte</h2>
+      <p class="s-card-desc">
+        La suppression est <strong class="danger-text">définitive</strong>. Toutes vos données — cartes, clients, tampons, récompenses — seront effacées.
+      </p>
+
+      <ul class="danger-list">
+        <li>Irréversible — aucune récupération possible</li>
+        <li>Vos clients perdent l'accès à leur carte Wallet</li>
+        <li>Toutes les automations SMS sont arrêtées</li>
+      </ul>
+
+      @if (!showDeleteConfirm()) {
+        <button class="btn btn-danger-outline" (click)="showDeleteConfirm.set(true)">
+          🗑️ Supprimer mon compte
+        </button>
+      } @else {
+        <div class="delete-confirm">
+          <p class="delete-confirm-label">Tapez <strong>"supprimer"</strong> pour confirmer</p>
+          <input type="text" class="s-input delete-input"
+            [value]="deleteConfirmText()"
+            (input)="deleteConfirmText.set($any($event.target).value)"
+            placeholder="supprimer" />
+          <div class="delete-actions">
+            <button class="btn btn-secondary" (click)="showDeleteConfirm.set(false); deleteConfirmText.set('')">Annuler</button>
+            <button class="btn btn-danger" (click)="deleteAccount()" [disabled]="!canDelete() || deleting()">
+              @if (deleting()) { Suppression... } @else { Supprimer définitivement }
             </button>
-            <a [href]="publicPageUrl()" target="_blank" class="btn btn-primary">
-              🌐 Voir la page
-            </a>
           </div>
-        }
-      </div>
-
+        </div>
+      }
     </div>
 
   </div>
-
   }
 </div>

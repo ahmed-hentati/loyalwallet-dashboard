@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 const DEMO_EMAIL    = 'demo@loyalwallet.app';
-const DEMO_PASSWORD = 'demo1234';
+const DEMO_PASSWORD = '1234';
 
 @Component({
   selector: 'app-login',
