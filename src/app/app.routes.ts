@@ -9,6 +9,10 @@ export const routes: Routes = [
   },
   // ── Pages publiques (pas besoin d'être connecté) ──
   {
+    path: 'onboarding',
+    loadComponent: () => import('./pages/onboarding/onboarding.component').then(m => m.OnboardingComponent),
+  },
+  {
     path: 'register/:restaurantId/:cardId',
     loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent),
   },

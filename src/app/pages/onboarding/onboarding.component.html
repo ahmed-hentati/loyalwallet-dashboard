@@ -1,0 +1,167 @@
+<div class="ob-page">
+
+  <!-- Header -->
+  <div class="ob-header">
+    <div class="ob-logo">
+      <span class="ob-logo-icon">🎯</span>
+      <span class="ob-logo-text">LoyalWallet</span>
+    </div>
+    <div class="ob-tagline">FIDÉLITÉ DIGITALE</div>
+  </div>
+
+  <!-- Card -->
+  <div class="ob-card">
+
+    <!-- Progress steps -->
+    <div class="ob-steps">
+      <div class="ob-step" [class.active]="step() === 1" [class.done]="step() > 1">
+        <div class="ob-step-circle">
+          @if (step() > 1) { ✓ } @else { 📋 }
+        </div>
+        <div class="ob-step-label">Informations</div>
+      </div>
+      <div class="ob-step-line" [class.done]="step() > 1"></div>
+      <div class="ob-step" [class.active]="step() === 2" [class.done]="step() > 2">
+        <div class="ob-step-circle">
+          @if (step() > 2) { ✓ } @else { 🖼️ }
+        </div>
+        <div class="ob-step-label">Logo</div>
+      </div>
+      <div class="ob-step-line" [class.done]="step() > 2"></div>
+      <div class="ob-step" [class.active]="step() === 3">
+        <div class="ob-step-circle">🎉</div>
+        <div class="ob-step-label">Terminé</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1 : Informations ── -->
+    @if (step() === 1) {
+      <div class="ob-content">
+        <p class="ob-step-hint">Quelques détails pour personnaliser votre espace</p>
+        <h2 class="ob-title">Informations du commerce</h2>
+        <p class="ob-subtitle">Tous les champs sont optionnels</p>
+
+        <div class="ob-form">
+          <div class="ob-field">
+            <span class="ob-field-icon">📞</span>
+            <input type="tel"
+              [value]="phone()"
+              (input)="phone.set($any($event.target).value)"
+              placeholder="06 12 34 56 78" />
+          </div>
+          <div class="ob-field">
+            <span class="ob-field-icon">📍</span>
+            <input type="text"
+              [value]="address()"
+              (input)="address.set($any($event.target).value)"
+              placeholder="12 Rue du Commerce" />
+          </div>
+          <div class="ob-field-row">
+            <div class="ob-field">
+              <span class="ob-field-icon">🏙️</span>
+              <input type="text"
+                [value]="city()"
+                (input)="city.set($any($event.target).value)"
+                placeholder="Paris" />
+            </div>
+            <div class="ob-field ob-field-small">
+              <span class="ob-field-icon">#</span>
+              <input type="text"
+                [value]="postalCode()"
+                (input)="postalCode.set($any($event.target).value)"
+                placeholder="75001" />
+            </div>
+          </div>
+          <div class="ob-field">
+            <span class="ob-field-icon">🌐</span>
+            <input type="url"
+              [value]="website()"
+              (input)="website.set($any($event.target).value)"
+              placeholder="https://moncommerce.fr" />
+          </div>
+        </div>
+
+        <div class="ob-actions">
+          <button class="ob-btn ob-btn-skip" (click)="saveInfo(true)">
+            ▷ Passer
+          </button>
+          <button class="ob-btn ob-btn-primary" (click)="saveInfo()" [disabled]="savingInfo()">
+            {{ savingInfo() ? 'Enregistrement...' : 'Suivant →' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 2 : Logo ── -->
+    @if (step() === 2) {
+      <div class="ob-content">
+        <p class="ob-step-hint">Votre identité visuelle sur la carte de fidélité</p>
+        <h2 class="ob-title">Logo du commerce</h2>
+        <p class="ob-subtitle">Affiché sur votre carte de fidélité</p>
+
+        <label class="ob-drop-zone" [class.has-logo]="logoPreview()">
+          <input type="file" accept="image/*" (change)="onLogoSelected($event)" class="ob-file-input" />
+
+          @if (uploadingLogo()) {
+            <div class="ob-drop-uploading">
+              <div class="ob-spinner"></div>
+              <span>Upload en cours...</span>
+            </div>
+          } @else if (logoPreview()) {
+            <div class="ob-drop-preview">
+              <img [src]="logoPreview()" alt="Logo" class="ob-logo-preview" />
+              <span class="ob-drop-change">Cliquer pour changer</span>
+            </div>
+          } @else {
+            <div class="ob-drop-empty">
+              <div class="ob-drop-icon">📸</div>
+              <div class="ob-drop-text">Glissez ou cliquez pour ajouter</div>
+              <div class="ob-drop-sub">JPG, PNG, WebP — Max 5 Mo</div>
+            </div>
+          }
+        </label>
+
+        <div class="ob-actions">
+          <button class="ob-btn ob-btn-back" (click)="step.set(1)">←</button>
+          <button class="ob-btn ob-btn-skip" (click)="goToFinish()">▷ Passer</button>
+          <button class="ob-btn ob-btn-primary" (click)="goToFinish()" [disabled]="uploadingLogo()">
+            Suivant →
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 3 : Terminé ── -->
+    @if (step() === 3) {
+      <div class="ob-content ob-finish">
+        <div class="ob-finish-emoji">🎉</div>
+        <h2 class="ob-title">Vous êtes prêt !</h2>
+        <p class="ob-finish-desc">
+          Bienvenue sur LoyalWallet, <strong>{{ restaurantName() }}</strong>.<br/>
+          Votre programme de fidélité est prêt à être configuré.
+        </p>
+
+        <div class="ob-finish-steps">
+          <div class="ob-finish-step">
+            <span class="ob-finish-num">1</span>
+            <span>Créez votre première carte de fidélité</span>
+          </div>
+          <div class="ob-finish-step">
+            <span class="ob-finish-num">2</span>
+            <span>Imprimez votre QR code et posez-le en caisse</span>
+          </div>
+          <div class="ob-finish-step">
+            <span class="ob-finish-num">3</span>
+            <span>Vos clients s'inscrivent et cumulent leurs tampons</span>
+          </div>
+        </div>
+
+        <button class="ob-btn ob-btn-primary ob-btn-full" (click)="goToDashboard()">
+          Accéder au dashboard →
+        </button>
+      </div>
+    }
+
+  </div>
+
+</div>

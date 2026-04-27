@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 const DEMO_EMAIL    = 'demo@loyalwallet.app';
-const DEMO_PASSWORD = '1234';
+const DEMO_PASSWORD = 'demo1234';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +44,7 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
     this.auth.register({ name, email, password, phone: phone || undefined }).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => this.router.navigate(['/onboarding']),
       error: err => { this.error.set(err.error?.error ?? 'Erreur de création'); this.loading.set(false); },
     });
   }
