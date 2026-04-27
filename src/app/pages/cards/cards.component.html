@@ -68,10 +68,10 @@
 
     @if (!loading() && cards().length === 0) {
       <div class="empty-state">
-        <div class="icon">🎴</div>
-        <h3>Aucune carte créée</h3>
-        <p>Créez votre première carte de fidélité</p>
-        <button class="btn btn-primary" (click)="openCreate()">Créer une carte</button>
+        <div class="empty-icon">🎴</div>
+        <h3 class="empty-title">Aucune carte créée</h3>
+        <p class="empty-desc">Créez votre première carte de fidélité en quelques secondes</p>
+        <button class="btn btn-primary empty-btn" (click)="openCreate()">+ Créer ma première carte</button>
       </div>
     }
   </div>
